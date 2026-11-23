@@ -2,16 +2,16 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sour+Gummy:wght@400..900&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
 <style>
 /* Layout: sticky tab bar over a blush page; term map grid → week detail → games → labs. Cards only where something is a tappable object. */
 :root{
   --bg:#ffffff; --surface:#ffffff; --soft:#ffe9f4; --soft2:#ffc4e1;
   --ink:#4d0a33; --muted:#a3437a; --line:#ffcce5;
   --rose:#f50f8a; --rose-ink:#ffffff; --berry:#c70a6e; --white:#ffffff;
-  color-scheme:light;
+  color-scheme:light; font-synthesis:none;
   --ok:#1f8a6a; --ok-soft:#d8f3ea; --bad:#c0392b; --bad-soft:#fde2df; --warn:#b7791f; --warn-soft:#fdf0d5;
-  --display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --display:"Sour Gummy", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
   --body:"Nunito", "Segoe UI", system-ui, sans-serif;
   --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
   --r:18px; --shadow:0 6px 24px -12px rgba(240,21,127,.32);
@@ -30,19 +30,22 @@ button{font:inherit;color:inherit;cursor:pointer}
 /* header */
 header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--rose);box-shadow:0 4px 18px -10px rgba(245,15,138,.7)}
 .topin{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:1.25rem;color:var(--white);letter-spacing:-.01em}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:1.5rem;color:var(--white);letter-spacing:.01em}
+.nw{white-space:nowrap}
+.hi{position:relative;display:inline-block;--hm:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.9 4.5 6.6 4.2c2.2-.2 4 1 5.4 2.9 1.4-1.9 3.2-3.1 5.4-2.9 3.7.3 5.7 4.2 4.2 7.6C19.5 16.4 12 21 12 21z%22/%3E%3C/svg%3E")}
+.hi::after{content:"";position:absolute;left:50%;top:-.06em;width:.38em;height:.38em;transform:translateX(-50%);background:currentColor;-webkit-mask:var(--hm) no-repeat center/contain;mask:var(--hm) no-repeat center/contain}
 .brand svg{flex:none}
 .sync{font-family:var(--body);font-size:.72rem;font-weight:800;padding:3px 9px;border-radius:99px;background:var(--white);color:var(--rose);white-space:nowrap}
 .sync[data-s="ok"]{background:var(--ok-soft);color:var(--ok)}
 .sync[data-s="warn"]{background:var(--warn-soft);color:var(--warn)}
 nav.tabs{display:flex;gap:4px;background:rgba(255,255,255,.2);padding:4px;border-radius:999px;overflow-x:auto;max-width:100%}
-nav.tabs button{border:0;background:transparent;padding:7px 14px;border-radius:999px;font-weight:800;font-size:.9rem;white-space:nowrap;color:var(--white)}
+nav.tabs button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-family:var(--display);font-weight:700;font-size:1.05rem;letter-spacing:.01em;white-space:nowrap;color:var(--white)}
 nav.tabs button[aria-selected="true"]{background:var(--white);color:var(--rose)}
 header.top :focus-visible{outline-color:var(--white)}
 
 /* hero */
 .hero{padding-block:36px 20px;display:grid;grid-template-columns:1.4fr 1fr;gap:28px;align-items:center}
-.hero h1{font-size:clamp(2rem,5vw,3.3rem);font-weight:800;letter-spacing:-.02em;color:var(--berry)}
+.hero h1{font-size:clamp(2.4rem,6vw,4rem);font-weight:800;letter-spacing:0;line-height:1.08;color:var(--berry)}
 .hero h1 em{font-style:normal;color:var(--rose)}
 .hero p{max-width:58ch;margin:.7em 0 0}
 .draft{display:inline-flex;gap:8px;align-items:center;background:var(--warn-soft);color:var(--warn);font-weight:800;font-size:.8rem;padding:6px 12px;border-radius:999px;margin-bottom:12px}
@@ -54,16 +57,16 @@ header.top :focus-visible{outline-color:var(--white)}
 /* hearts & bows */
 .ic-heart,.ic-bow{display:inline-block;background:currentColor;-webkit-mask:var(--m) no-repeat center/contain;mask:var(--m) no-repeat center/contain;flex:none}
 .ic-heart{--m:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.9 4.5 6.6 4.2c2.2-.2 4 1 5.4 2.9 1.4-1.9 3.2-3.1 5.4-2.9 3.7.3 5.7 4.2 4.2 7.6C19.5 16.4 12 21 12 21z%22/%3E%3C/svg%3E");width:1em;height:1em}
-.ic-bow{--m:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 40%22%3E%3Cpath d=%22M32 20C24 8 8 3 5 12c-2.6 8 9 13 27 8z%22/%3E%3Cpath d=%22M32 20C40 8 56 3 59 12c2.6 8-9 13-27 8z%22/%3E%3Cpath d=%22M29.5 22.5 21 38l5.5-1.6L29 40l4-16zM34.5 22.5 43 38l-5.5-1.6L35 40l-4-16z%22/%3E%3Cellipse cx=%2232%22 cy=%2220%22 rx=%225.5%22 ry=%226.5%22/%3E%3C/svg%3E");width:1.6em;height:1em}
+.ic-bow{--m:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 64%22%3E%3Cmask id=%22m%22%3E%3Crect width=%22100%22 height=%2264%22 fill=%22%23fff%22/%3E%3Cg fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22%3E%3Cpath d=%22M45 26C38 18 26 11 17 12%22/%3E%3Cpath d=%22M55 26C62 18 74 11 83 12%22/%3E%3Cpath d=%22M44 29c-7 3-17 5-26 3%22/%3E%3Cpath d=%22M56 29c7 3 17 5 26 3%22/%3E%3C/g%3E%3C/mask%3E%3Cg mask=%22url%28%23m%29%22%3E%3Cpath d=%22M50 27C42 13 27 3 15 5 5 7 2 18 6 27c4 9 18 12 30 8 6-2 11-5 14-8z%22/%3E%3Cpath d=%22M50 27C58 13 73 3 85 5c10 2 13 13 9 22-4 9-18 12-30 8-6-2-11-5-14-8z%22/%3E%3Cpath d=%22M46 32c-3 10-9 19-16 27l8-1 3 6c6-8 10-18 11-28z%22/%3E%3Cpath d=%22M54 32c3 10 9 19 16 27l-8 1-3 6c-6-8-10-18-11-28z%22/%3E%3Crect x=%2242.5%22 y=%2219%22 width=%2215%22 height=%2217%22 rx=%226.5%22/%3E%3C/g%3E%3C/svg%3E");width:1.56em;height:1em}
 .hero{position:relative}
 .hero > *{position:relative;z-index:1}
 .hero > .deco{position:absolute;inset:0;z-index:0;pointer-events:none;color:var(--soft2)}
 .deco span{position:absolute}
 @media (max-width:860px){.hero > .deco{display:none}}
 .sechead h2{display:flex;align-items:center;gap:10px}
-.sechead h2::before{content:"";width:40px;height:25px;background:var(--rose);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 40%22%3E%3Cpath d=%22M32 20C24 8 8 3 5 12c-2.6 8 9 13 27 8z%22/%3E%3Cpath d=%22M32 20C40 8 56 3 59 12c2.6 8-9 13-27 8z%22/%3E%3Cpath d=%22M29.5 22.5 21 38l5.5-1.6L29 40l4-16zM34.5 22.5 43 38l-5.5-1.6L35 40l-4-16z%22/%3E%3Cellipse cx=%2232%22 cy=%2220%22 rx=%225.5%22 ry=%226.5%22/%3E%3C/svg%3E") no-repeat center/contain;mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 40%22%3E%3Cpath d=%22M32 20C24 8 8 3 5 12c-2.6 8 9 13 27 8z%22/%3E%3Cpath d=%22M32 20C40 8 56 3 59 12c2.6 8-9 13-27 8z%22/%3E%3Cpath d=%22M29.5 22.5 21 38l5.5-1.6L29 40l4-16zM34.5 22.5 43 38l-5.5-1.6L35 40l-4-16z%22/%3E%3Cellipse cx=%2232%22 cy=%2220%22 rx=%225.5%22 ry=%226.5%22/%3E%3C/svg%3E") no-repeat center/contain;flex:none}
+.sechead h2::before{content:"";width:44px;height:28px;background:var(--rose);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 64%22%3E%3Cmask id=%22m%22%3E%3Crect width=%22100%22 height=%2264%22 fill=%22%23fff%22/%3E%3Cg fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22%3E%3Cpath d=%22M45 26C38 18 26 11 17 12%22/%3E%3Cpath d=%22M55 26C62 18 74 11 83 12%22/%3E%3Cpath d=%22M44 29c-7 3-17 5-26 3%22/%3E%3Cpath d=%22M56 29c7 3 17 5 26 3%22/%3E%3C/g%3E%3C/mask%3E%3Cg mask=%22url%28%23m%29%22%3E%3Cpath d=%22M50 27C42 13 27 3 15 5 5 7 2 18 6 27c4 9 18 12 30 8 6-2 11-5 14-8z%22/%3E%3Cpath d=%22M50 27C58 13 73 3 85 5c10 2 13 13 9 22-4 9-18 12-30 8-6-2-11-5-14-8z%22/%3E%3Cpath d=%22M46 32c-3 10-9 19-16 27l8-1 3 6c6-8 10-18 11-28z%22/%3E%3Cpath d=%22M54 32c3 10 9 19 16 27l-8 1-3 6c-6-8-10-18-11-28z%22/%3E%3Crect x=%2242.5%22 y=%2219%22 width=%2215%22 height=%2217%22 rx=%226.5%22/%3E%3C/g%3E%3C/svg%3E") no-repeat center/contain;mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 64%22%3E%3Cmask id=%22m%22%3E%3Crect width=%22100%22 height=%2264%22 fill=%22%23fff%22/%3E%3Cg fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22%3E%3Cpath d=%22M45 26C38 18 26 11 17 12%22/%3E%3Cpath d=%22M55 26C62 18 74 11 83 12%22/%3E%3Cpath d=%22M44 29c-7 3-17 5-26 3%22/%3E%3Cpath d=%22M56 29c7 3 17 5 26 3%22/%3E%3C/g%3E%3C/mask%3E%3Cg mask=%22url%28%23m%29%22%3E%3Cpath d=%22M50 27C42 13 27 3 15 5 5 7 2 18 6 27c4 9 18 12 30 8 6-2 11-5 14-8z%22/%3E%3Cpath d=%22M50 27C58 13 73 3 85 5c10 2 13 13 9 22-4 9-18 12-30 8-6-2-11-5-14-8z%22/%3E%3Cpath d=%22M46 32c-3 10-9 19-16 27l8-1 3 6c6-8 10-18 11-28z%22/%3E%3Cpath d=%22M54 32c3 10 9 19 16 27l-8 1-3 6c-6-8-10-18-11-28z%22/%3E%3Crect x=%2242.5%22 y=%2219%22 width=%2215%22 height=%2217%22 rx=%226.5%22/%3E%3C/g%3E%3C/svg%3E") no-repeat center/contain;flex:none}
 .meter{position:relative}
-.meter::after{content:"";position:absolute;top:-18px;right:22px;width:58px;height:36px;background:var(--rose);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 40%22%3E%3Cpath d=%22M32 20C24 8 8 3 5 12c-2.6 8 9 13 27 8z%22/%3E%3Cpath d=%22M32 20C40 8 56 3 59 12c2.6 8-9 13-27 8z%22/%3E%3Cpath d=%22M29.5 22.5 21 38l5.5-1.6L29 40l4-16zM34.5 22.5 43 38l-5.5-1.6L35 40l-4-16z%22/%3E%3Cellipse cx=%2232%22 cy=%2220%22 rx=%225.5%22 ry=%226.5%22/%3E%3C/svg%3E") no-repeat center/contain;mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 40%22%3E%3Cpath d=%22M32 20C24 8 8 3 5 12c-2.6 8 9 13 27 8z%22/%3E%3Cpath d=%22M32 20C40 8 56 3 59 12c2.6 8-9 13-27 8z%22/%3E%3Cpath d=%22M29.5 22.5 21 38l5.5-1.6L29 40l4-16zM34.5 22.5 43 38l-5.5-1.6L35 40l-4-16z%22/%3E%3Cellipse cx=%2232%22 cy=%2220%22 rx=%225.5%22 ry=%226.5%22/%3E%3C/svg%3E") no-repeat center/contain}
+.meter::after{content:"";position:absolute;top:-22px;right:22px;width:64px;height:41px;background:var(--rose);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 64%22%3E%3Cmask id=%22m%22%3E%3Crect width=%22100%22 height=%2264%22 fill=%22%23fff%22/%3E%3Cg fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22%3E%3Cpath d=%22M45 26C38 18 26 11 17 12%22/%3E%3Cpath d=%22M55 26C62 18 74 11 83 12%22/%3E%3Cpath d=%22M44 29c-7 3-17 5-26 3%22/%3E%3Cpath d=%22M56 29c7 3 17 5 26 3%22/%3E%3C/g%3E%3C/mask%3E%3Cg mask=%22url%28%23m%29%22%3E%3Cpath d=%22M50 27C42 13 27 3 15 5 5 7 2 18 6 27c4 9 18 12 30 8 6-2 11-5 14-8z%22/%3E%3Cpath d=%22M50 27C58 13 73 3 85 5c10 2 13 13 9 22-4 9-18 12-30 8-6-2-11-5-14-8z%22/%3E%3Cpath d=%22M46 32c-3 10-9 19-16 27l8-1 3 6c6-8 10-18 11-28z%22/%3E%3Cpath d=%22M54 32c3 10 9 19 16 27l-8 1-3 6c-6-8-10-18-11-28z%22/%3E%3Crect x=%2242.5%22 y=%2219%22 width=%2215%22 height=%2217%22 rx=%226.5%22/%3E%3C/g%3E%3C/svg%3E") no-repeat center/contain;mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 64%22%3E%3Cmask id=%22m%22%3E%3Crect width=%22100%22 height=%2264%22 fill=%22%23fff%22/%3E%3Cg fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22%3E%3Cpath d=%22M45 26C38 18 26 11 17 12%22/%3E%3Cpath d=%22M55 26C62 18 74 11 83 12%22/%3E%3Cpath d=%22M44 29c-7 3-17 5-26 3%22/%3E%3Cpath d=%22M56 29c7 3 17 5 26 3%22/%3E%3C/g%3E%3C/mask%3E%3Cg mask=%22url%28%23m%29%22%3E%3Cpath d=%22M50 27C42 13 27 3 15 5 5 7 2 18 6 27c4 9 18 12 30 8 6-2 11-5 14-8z%22/%3E%3Cpath d=%22M50 27C58 13 73 3 85 5c10 2 13 13 9 22-4 9-18 12-30 8-6-2-11-5-14-8z%22/%3E%3Cpath d=%22M46 32c-3 10-9 19-16 27l8-1 3 6c6-8 10-18 11-28z%22/%3E%3Cpath d=%22M54 32c3 10 9 19 16 27l-8 1-3 6c-6-8-10-18-11-28z%22/%3E%3Crect x=%2242.5%22 y=%2219%22 width=%2215%22 height=%2217%22 rx=%226.5%22/%3E%3C/g%3E%3C/svg%3E") no-repeat center/contain}
 ul.clean{list-style:none;padding-left:0}
 ul.clean li{position:relative;padding-left:22px}
 ul.clean li::before{content:"";position:absolute;left:0;top:.42em;width:13px;height:13px;background:var(--rose);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.9 4.5 6.6 4.2c2.2-.2 4 1 5.4 2.9 1.4-1.9 3.2-3.1 5.4-2.9 3.7.3 5.7 4.2 4.2 7.6C19.5 16.4 12 21 12 21z%22/%3E%3C/svg%3E") no-repeat center/contain;mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.9 4.5 6.6 4.2c2.2-.2 4 1 5.4 2.9 1.4-1.9 3.2-3.1 5.4-2.9 3.7.3 5.7 4.2 4.2 7.6C19.5 16.4 12 21 12 21z%22/%3E%3C/svg%3E") no-repeat center/contain}
@@ -79,7 +82,7 @@ footer .hearts{display:flex;gap:8px;color:var(--soft2);margin-bottom:10px;font-s
 /* term map */
 section.view{padding-block:8px 60px}
 .sechead{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin:18px 0 14px}
-.sechead h2{font-size:1.6rem}
+.sechead h2{font-size:1.85rem;font-weight:800}
 .weeks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 .wk{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px;transition:transform .15s,box-shadow .15s;min-width:0}
 .wk:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
@@ -117,7 +120,7 @@ ul.clean li{margin:.25em 0}
 .mnemo dt{font-family:var(--mono);font-weight:700;color:var(--berry)}
 .mnemo dd{margin:0}
 textarea{width:100%;min-height:120px;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--bg);color:var(--ink);font:inherit;resize:vertical}
-.btn{border:0;background:var(--rose);color:var(--rose-ink);font-weight:800;padding:9px 16px;border-radius:99px}
+.btn{border:0;background:var(--rose);color:var(--rose-ink);font-family:var(--display);font-weight:700;font-size:1.02rem;letter-spacing:.01em;padding:8px 18px;border-radius:99px}
 .btn.ghost{background:var(--soft);color:var(--berry)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 
@@ -320,8 +323,8 @@ nav.tabs button[aria-selected="true"] .badge{background:var(--rose);color:var(--
 <header class="top">
   <div class="wrap topin">
     <div class="brand">
-      <svg width="40" height="25" viewBox="0 0 64 40" aria-hidden="true" fill="currentColor"><path d="M32 20C24 8 8 3 5 12c-2.6 8 9 13 27 8z"/><path d="M32 20C40 8 56 3 59 12c2.6 8-9 13-27 8z"/><path d="M29.5 22.5 21 38l5.5-1.6L29 40l4-16zM34.5 22.5 43 38l-5.5-1.6L35 40l-4-16z"/><ellipse cx="32" cy="20" rx="5.5" ry="6.5"/><path d="M30 18.5C25 12 15 9 11 12.5M34 18.5C39 12 49 9 53 12.5" fill="none" stroke="var(--rose)" stroke-width="1.6" stroke-linecap="round" opacity=".55"/></svg>
-      Maternity/OB
+      <svg width="44" height="28" viewBox="0 0 100 64" aria-hidden="true"><g fill="currentColor"><path d="M50 27C42 13 27 3 15 5 5 7 2 18 6 27c4 9 18 12 30 8 6-2 11-5 14-8z"/><path d="M50 27C58 13 73 3 85 5c10 2 13 13 9 22-4 9-18 12-30 8-6-2-11-5-14-8z"/><path d="M46 32c-3 10-9 19-16 27l8-1 3 6c6-8 10-18 11-28z"/><path d="M54 32c3 10 9 19 16 27l-8 1-3 6c-6-8-10-18-11-28z"/><rect x="42.5" y="19" width="15" height="17" rx="6.5"/></g><g fill="none" stroke="var(--rose)" stroke-width="2.4" stroke-linecap="round" opacity=".6"><path d="M45 26C38 18 26 11 17 12"/><path d="M55 26C62 18 74 11 83 12"/></g></svg>
+      <span class="sr">Maternity/OB</span><span class="nw" aria-hidden="true">Matern<span class="hi">ı</span>ty/OB</span>
       <span class="sync" id="sync" data-s="local" aria-live="polite">Saved on this device</span>
     </div>
     <nav class="tabs" role="tablist" aria-label="Sections">
@@ -349,7 +352,7 @@ nav.tabs button[aria-selected="true"] .badge{background:var(--rose);color:var(--
       </div>
       <div>
         <span class="draft">● Rough draft, sample content</span>
-        <h1>Term 5: <em>Maternity</em> &amp; OB, one week at a time.</h1>
+        <h1>Term 5: <em><span class="sr">Maternity</span><span class="nw" aria-hidden="true">Matern<span class="hi">ı</span>ty</span></em> &amp; OB, one week at a time.</h1>
         <p>Each week has a page for your lectures, PowerPoints and notes, plus a checklist, a memory trick, and games and labs for practice. The topics below follow a typical LPN maternity course. Once your syllabus arrives, they get swapped for your instructor's real schedule.</p>
       </div>
       <div class="meter" aria-live="polite">

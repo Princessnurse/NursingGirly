@@ -43,6 +43,9 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background
 .topin{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:1.2rem;color:var(--berry)}
 .brand svg{flex:none}
+.sync{font-family:var(--body);font-size:.72rem;font-weight:800;padding:3px 9px;border-radius:99px;background:var(--soft);color:var(--muted);white-space:nowrap}
+.sync[data-s="ok"]{background:var(--ok-soft);color:var(--ok)}
+.sync[data-s="warn"]{background:var(--warn-soft);color:var(--warn)}
 nav.tabs{display:flex;gap:4px;background:var(--soft);padding:4px;border-radius:999px;overflow-x:auto;max-width:100%}
 nav.tabs button{border:0;background:transparent;padding:7px 14px;border-radius:999px;font-weight:800;font-size:.9rem;white-space:nowrap;color:var(--muted)}
 nav.tabs button[aria-selected="true"]{background:var(--rose);color:var(--rose-ink)}
@@ -178,6 +181,7 @@ footer{padding-block:24px 40px;color:var(--muted);font-size:.85rem;border-top:1p
     <div class="brand">
       <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><g fill="var(--rose)"><circle cx="16" cy="8" r="6"/><circle cx="24" cy="15" r="6"/><circle cx="21" cy="24" r="6"/><circle cx="11" cy="24" r="6"/><circle cx="8" cy="15" r="6"/></g><circle cx="16" cy="17" r="4.5" fill="var(--bg)"/></svg>
       Bloom OB
+      <span class="sync" id="sync" data-s="local" aria-live="polite">Saved on this device</span>
     </div>
     <nav class="tabs" role="tablist" aria-label="Sections">
       <button role="tab" data-tab="map" aria-selected="true">Term map</button>
@@ -299,7 +303,7 @@ footer{padding-block:24px 40px;color:var(--muted);font-size:.85rem;border-top:1p
 </section>
 </main>
 
-<footer><div class="wrap">Draft built before term starts. Sample content covers general LPN maternity concepts. Always follow your instructor's materials and facility policy. Your checklists and notes are saved in this browser only.</div></footer>
+<footer><div class="wrap">Draft built before term starts. Sample content covers general LPN maternity concepts. Always follow your instructor's materials and facility policy. Your checklists and notes sync to your Claude account, so they follow you between your phone and laptop.</div></footer>
 
 <script>
 (function(){
@@ -401,6 +405,8 @@ const SIGNS=[
 
 /* ---------- PROGRESS ---------- */
 let done=store.get('done',{});
+let NOTES=store.get('notes',null);
+if(!NOTES){NOTES={};for(let n=1;n<=8;n++){const v=store.get('notes-'+n,'');if(v)NOTES[n]=v}}
 const key=(w,i)=>w+'-'+i;
 function weekPct(w){const t=WEEKS[w-1].tasks.length;let c=0;for(let i=0;i<t;i++)if(done[key(w,i)])c++;return [c,t]}
 function updateTerm(){let c=0,t=0;WEEKS.forEach(w=>{const[a,b]=weekPct(w.n);c+=a;t+=b});const p=t?Math.round(c/t*100):0;$('#termPct').textContent=p+'%';$('#termBar').style.width=p+'%';$('#termNote').textContent=c+' of '+t+' study tasks checked off'}
@@ -417,7 +423,7 @@ function renderMap(){
 let curWeek=store.get('curWeek',1);
 function renderWeek(){
   $('#weekPick').innerHTML=WEEKS.map(w=>`<button data-wk="${w.n}" aria-pressed="${w.n===curWeek}">Week ${w.n}</button>`).join('');
-  const w=WEEKS[curWeek-1];const notes=store.get('notes-'+w.n,'');
+  const w=WEEKS[curWeek-1];const notes=NOTES[w.n]||'';
   $('#weekBody').innerHTML=`
   <div class="wkhead"><div class="eyebrow">Week ${w.n} of 8</div><h2>${esc(w.title)}</h2>
    <div class="row" style="margin-top:8px">${w.tags.map(x=>`<span class="tag">${esc(x)}</span>`).join('')}</div></div>
@@ -432,7 +438,7 @@ function renderWeek(){
       </div>
       <div class="panel"><h3><label for="notes">My notes</label></h3>
         <textarea id="notes" placeholder="Jot down what your instructor emphasized, things to ask about, or 'this will be on the test' moments…">${esc(notes)}</textarea>
-        <p class="muted" style="font-size:.8rem;margin:.4em 0 0" id="saved">Saves automatically in this browser</p></div>
+        <p class="muted" style="font-size:.8rem;margin:.4em 0 0" id="saved">Saves automatically and syncs to your other devices</p></div>
     </div>
     <div class="stack">
       <div class="panel"><h3>Study checklist</h3>
@@ -446,9 +452,53 @@ function renderWeek(){
   </div>`;
 }
 document.addEventListener('change',e=>{
-  if(e.target.matches('.check input')){done[e.target.dataset.k]=e.target.checked;store.set('done',done);updateTerm();renderMap()}
+  if(e.target.matches('.check input')){done[e.target.dataset.k]=e.target.checked;store.set('done',done);updateTerm();renderMap();queueSync()}
 });
-let noteT;document.addEventListener('input',e=>{if(e.target.id==='notes'){clearTimeout(noteT);noteT=setTimeout(()=>{store.set('notes-'+curWeek,e.target.value);const s=$('#saved');if(s)s.textContent='Saved ✓'},400)}});
+let noteT;document.addEventListener('input',e=>{if(e.target.id==='notes'){const wk=curWeek,v=e.target.value;clearTimeout(noteT);noteT=setTimeout(()=>{if(v)NOTES[wk]=v;else delete NOTES[wk];store.set('notes',NOTES);const s=$('#saved');if(s)s.textContent='Saved ✓';queueSync()},500)}});
+
+/* ---------- CROSS-DEVICE SYNC (private per person) ---------- */
+let syncRef=null,saving=false,dirty=false,syncT,retried=false;
+function setSync(s,t){const el=$('#sync');if(el){el.dataset.s=s;el.textContent=t}}
+function queueSync(){if(!syncRef)return;dirty=true;setSync('saving','Saving…');clearTimeout(syncT);syncT=setTimeout(flush,700)}
+async function flush(){
+  if(saving||!dirty||!syncRef)return;saving=true;dirty=false;
+  try{await syncRef.set({done:done,notes:NOTES,updatedAt:Date.now()});retried=false;if(!dirty)setSync('ok','Synced ✓')}
+  catch(e){if(e&&e.code==='unavailable'&&!retried){retried=true;dirty=true;saving=false;setTimeout(flush,1200+Math.random()*1200);return}
+    setSync('warn','Not synced, saved on this device')}
+  saving=false;if(dirty)flush();
+}
+function applyRemote(){
+  renderMap();
+  if(!$('#v-week').hidden){
+    if(document.activeElement&&document.activeElement.id==='notes'){$$('.check input').forEach(i=>i.checked=!!done[i.dataset.k])}
+    else renderWeek();
+  }
+}
+async function startSync(){
+  if(!window.claude||typeof window.claude.use!=='function')return;
+  setSync('saving','Connecting…');
+  const [db,user]=await Promise.all([window.claude.use('db'),window.claude.use('user')]);
+  let uid=null;try{uid=user?await user.id():null}catch(e){}
+  if(!db||!uid){setSync('local','Saved on this device');return}
+  try{syncRef=db.doc('data/users/'+uid+'/progress')}catch(e){setSync('local','Saved on this device');return}
+  let settled=false;
+  const timer=setTimeout(()=>{if(!settled)setSync('warn','Sync not reachable yet')},10000);
+  syncRef.onSnapshot(snap=>{
+    if(!snap.metadata.fromCache){clearTimeout(timer)}
+    if(snap.metadata.hasPendingWrites||dirty||saving)return;
+    if(!snap.exists){
+      if(!snap.metadata.fromCache&&!settled){settled=true;
+        if(Object.keys(done).length||Object.keys(NOTES).length){dirty=true;setSync('saving','Saving…');flush()}else setSync('ok','Synced ✓')}
+      return;
+    }
+    if(!snap.metadata.fromCache)settled=true;
+    const d=snap.data()||{};
+    done=Object.assign({},d.done||{});NOTES=Object.assign({},d.notes||{});
+    store.set('done',done);store.set('notes',NOTES);
+    applyRemote();
+    if(!snap.metadata.fromCache)setSync('ok','Synced ✓');
+  },err=>{clearTimeout(timer);syncRef=null;setSync('warn','Not synced, saved on this device')});
+}
 
 /* ---------- TABS ---------- */
 function show(tab){$$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));['map','week','games','labs'].forEach(t=>$('#v-'+t).hidden=t!==tab);if(tab==='week')renderWeek();if(tab==='games')renderGame();window.scrollTo({top:0})}
@@ -596,5 +646,6 @@ $('#mgGo').click();
 
 /* boot */
 renderMap();renderGame();
+startSync();
 })();
 </script>

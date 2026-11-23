@@ -179,6 +179,31 @@ select,input[type="date"],input[type="time"],input[type="number"],input[type="te
 .strip{width:100%;height:auto;display:block;background:var(--bg);border-radius:12px;border:1px solid var(--line)}
 footer{padding-block:24px 100px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
 
+/* care plans */
+.cpgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.1fr);gap:18px;align-items:start}
+.cplist{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.cpi{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;min-width:0}
+.cpi b{display:block;overflow-wrap:anywhere}
+.cpi span{font-size:.8rem;color:var(--muted);font-weight:700}
+.cpi.on{border-color:var(--rose);box-shadow:0 0 0 2px var(--rose) inset;background:var(--soft)}
+.cphead{display:flex;gap:10px;align-items:center}
+.cptitle{flex:1;min-width:0;font-family:var(--display);font-size:1.4rem;font-weight:800;border:0;border-bottom:2px dashed var(--line);background:transparent;color:var(--ink);padding:4px 0}
+.cptitle:focus{border-bottom-color:var(--rose);outline:none}
+.cpsec{border-top:1px dashed var(--line);padding-top:14px;margin-top:16px}
+.cpsec h4{display:flex;align-items:center;gap:10px;font-size:1.08rem;margin-bottom:10px}
+.step{width:30px;height:30px;border-radius:50%;background:var(--rose);color:var(--white);display:grid;place-items:center;font-family:var(--display);font-size:1rem;flex:none}
+.formgrid.five{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+#cpEditor textarea{min-height:76px;resize:vertical;overflow:hidden}
+#cpEditor #cpCopyBox{overflow:auto}
+.dxprev{background:var(--soft);border-radius:12px;padding:12px 14px;font-weight:700;margin-top:4px}
+.dxprev small{display:block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--rose);margin-bottom:4px}
+.ivrow{display:grid;grid-template-columns:30px minmax(0,1fr) minmax(0,1fr) auto;gap:8px;align-items:start;margin-bottom:8px}
+.ivn{width:28px;height:28px;border-radius:50%;background:var(--soft);color:var(--berry);font-weight:800;display:grid;place-items:center;font-size:.85rem;margin-top:6px}
+.ivrow .x,.cpactions .x{border:0;background:transparent;color:var(--muted);font-weight:800;border-radius:8px;padding:6px 8px;font-size:1.1rem}
+.cpactions{margin-top:18px;padding-top:14px;border-top:1px dashed var(--line)}
+#cpDel.confirm{background:var(--bad-soft);color:var(--bad)}
+#cpCopyBox{margin-top:10px;min-height:160px;font-family:var(--mono);font-size:.8rem}
+@media (max-width:600px){.ivrow{grid-template-columns:30px minmax(0,1fr) auto}.ivrow textarea[data-k="why"]{grid-column:2}}
 /* dosage lab */
 .lab.wide{grid-column:1/-1}
 .dgrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px}
@@ -279,7 +304,7 @@ nav.tabs button[aria-selected="true"] .badge{background:var(--rose);color:var(--
 .empty{text-align:center;padding:30px 10px;color:var(--muted)}
 .empty b{display:block;font-family:var(--display);font-size:1.15rem;color:var(--ink);margin-bottom:4px}
 @media (max-width:860px){
-  .hero,.grid2,.labs,.plangrid,.dgrid{grid-template-columns:1fr}
+  .hero,.grid2,.labs,.plangrid,.dgrid,.cpgrid{grid-template-columns:1fr}
   .weeks,.gamepick{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:460px){
@@ -303,6 +328,7 @@ nav.tabs button[aria-selected="true"] .badge{background:var(--rose);color:var(--
       <button role="tab" data-tab="map" aria-selected="true">Term map</button>
       <button role="tab" data-tab="week" aria-selected="false">This week</button>
       <button role="tab" data-tab="planner" aria-selected="false">Planner<span class="badge" id="planBadge" hidden></span></button>
+      <button role="tab" data-tab="careplans" aria-selected="false">Care plans</button>
       <button role="tab" data-tab="games" aria-selected="false">Games</button>
       <button role="tab" data-tab="labs" aria-selected="false">Labs</button>
     </nav>
@@ -375,6 +401,36 @@ nav.tabs button[aria-selected="true"] .badge{background:var(--rose);color:var(--
       </div>
       <div class="panel" id="planList"></div>
     </div>
+  </div>
+</section>
+
+<!-- CARE PLANS -->
+<section class="view" id="v-careplans" hidden>
+  <div class="wrap">
+    <div class="sechead"><h2>Care plans</h2><span class="muted">ADPIE: assess, diagnose, plan, implement, evaluate</span></div>
+    <div class="cpgrid">
+      <div class="stack">
+        <div class="panel">
+          <h3>My care plans</h3>
+          <button class="btn" id="cpNew" type="button">New blank plan</button>
+          <label class="fld" style="margin-top:12px"><span>Or start from an OB example</span><select id="cpEx"><option value="">Choose an example…</option></select></label>
+          <div class="cplist" id="cpList"></div>
+        </div>
+        <div class="panel">
+          <h3>Writing tips</h3>
+          <ul class="clean" style="font-size:.92rem">
+            <li>Never use a patient's name. Use initials only (HIPAA).</li>
+            <li>Actual diagnosis: problem related to cause, as evidenced by signs and symptoms.</li>
+            <li>Risk diagnosis: "Risk for ___ related to risk factors." No "as evidenced by," because it hasn't happened yet.</li>
+            <li>Goals are patient-centered and measurable, with a time frame: "Patient will ___ by ___."</li>
+            <li>Give every intervention a rationale. List assessments first, then actions, then teaching.</li>
+            <li>Follow your program's care plan form if it differs from this one.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="panel" id="cpEditor"></div>
+    </div>
+    <datalist id="nandaList"><option value="Acute pain"></option><option value="Chronic pain"></option><option value="Labor pain"></option><option value="Risk for bleeding"></option><option value="Risk for infection"></option><option value="Risk for injury"></option><option value="Ineffective breastfeeding"></option><option value="Interrupted breastfeeding"></option><option value="Insufficient breast milk production"></option><option value="Deficient knowledge"></option><option value="Readiness for enhanced knowledge"></option><option value="Anxiety"></option><option value="Fear"></option><option value="Fatigue"></option><option value="Disturbed sleep pattern"></option><option value="Risk for constipation"></option><option value="Impaired urinary elimination"></option><option value="Urinary retention"></option><option value="Risk for impaired attachment"></option><option value="Readiness for enhanced parenting"></option><option value="Risk for imbalanced body temperature"></option><option value="Ineffective thermoregulation"></option><option value="Hypothermia"></option><option value="Risk for unstable blood glucose level"></option><option value="Risk for neonatal hyperbilirubinemia"></option><option value="Neonatal hyperbilirubinemia"></option><option value="Ineffective airway clearance"></option><option value="Risk for aspiration"></option><option value="Excess fluid volume"></option><option value="Deficient fluid volume"></option><option value="Risk for deficient fluid volume"></option><option value="Impaired skin integrity"></option><option value="Risk for impaired skin integrity"></option><option value="Impaired physical mobility"></option><option value="Risk for falls"></option><option value="Situational low self-esteem"></option><option value="Risk for disturbed maternal-fetal dyad"></option><option value="Imbalanced nutrition: less than body requirements"></option><option value="Nausea"></option><option value="Ineffective coping"></option><option value="Risk for post-trauma syndrome"></option><option value="Interrupted family processes"></option><option value="Self-care deficit: bathing"></option></datalist>
   </div>
 </section>
 
@@ -665,6 +721,7 @@ let NOTES=store.get('notes',null);
 if(!NOTES){NOTES={};for(let n=1;n<=8;n++){const v=store.get('notes-'+n,'');if(v)NOTES[n]=v}}
 let PLANS=store.get('plans',[]);if(!Array.isArray(PLANS))PLANS=[];
 let FOCUS=store.get('focus',{});if(!FOCUS||typeof FOCUS!=='object')FOCUS={};
+let CAREPLANS=store.get('careplans',[]);if(!Array.isArray(CAREPLANS))CAREPLANS=[];
 const key=(w,i)=>w+'-'+i;
 function weekPct(w){const t=WEEKS[w-1].tasks.length;let c=0;for(let i=0;i<t;i++)if(done[key(w,i)])c++;return [c,t]}
 function updateTerm(){let c=0,t=0;WEEKS.forEach(w=>{const[a,b]=weekPct(w.n);c+=a;t+=b});const p=t?Math.round(c/t*100):0;$('#termPct').textContent=p+'%';$('#termBar').style.width=p+'%';$('#termNote').textContent=c+' of '+t+' study tasks checked off'}
@@ -721,13 +778,14 @@ function setSync(s,t){const el=$('#sync');if(el){el.dataset.s=s;el.textContent=t
 function queueSync(){if(!syncRef)return;dirty=true;setSync('saving','Saving…');clearTimeout(syncT);syncT=setTimeout(flush,700)}
 async function flush(){
   if(saving||!dirty||!syncRef)return;saving=true;dirty=false;
-  try{await syncRef.set({done:done,notes:NOTES,plans:PLANS,focus:FOCUS,updatedAt:Date.now()});retried=false;if(!dirty)setSync('ok','Synced ✓')}
+  try{await syncRef.set({done:done,notes:NOTES,plans:PLANS,focus:FOCUS,careplans:CAREPLANS,updatedAt:Date.now()});retried=false;if(!dirty)setSync('ok','Synced ✓')}
   catch(e){if(e&&e.code==='unavailable'&&!retried){retried=true;dirty=true;saving=false;setTimeout(flush,1200+Math.random()*1200);return}
     setSync('warn','Not synced, saved on this device')}
   saving=false;if(dirty)flush();
 }
 function applyRemote(){
   renderMap();renderUpcoming();renderFocusNote();
+  if(!$('#v-careplans').hidden){if($('#cpEditor').contains(document.activeElement))renderCPList();else renderCP()}
   if(!$('#v-planner').hidden&&!$('#planForm').contains(document.activeElement))renderPlanList();
   if(!$('#v-week').hidden){
     if(document.activeElement&&document.activeElement.id==='notes'){$$('.check input').forEach(i=>i.checked=!!done[i.dataset.k])}
@@ -748,12 +806,12 @@ async function startSync(){
     if(snap.metadata.hasPendingWrites||dirty||saving)return;
     if(!snap.exists){
       if(!snap.metadata.fromCache&&!settled){settled=true;
-        if(Object.keys(done).length||Object.keys(NOTES).length||PLANS.length||Object.keys(FOCUS).length){dirty=true;setSync('saving','Saving…');flush()}else setSync('ok','Synced ✓')}
+        if(Object.keys(done).length||Object.keys(NOTES).length||PLANS.length||Object.keys(FOCUS).length||CAREPLANS.length){dirty=true;setSync('saving','Saving…');flush()}else setSync('ok','Synced ✓')}
       return;
     }
     if(!snap.metadata.fromCache)settled=true;
     const d=snap.data()||{};
-    done=Object.assign({},d.done||{});NOTES=Object.assign({},d.notes||{});PLANS=Array.isArray(d.plans)?d.plans.map(x=>Object.assign({},x)):[];FOCUS=Object.assign({},d.focus||{});store.set('focus',FOCUS);
+    done=Object.assign({},d.done||{});NOTES=Object.assign({},d.notes||{});PLANS=Array.isArray(d.plans)?d.plans.map(x=>Object.assign({},x)):[];FOCUS=Object.assign({},d.focus||{});store.set('focus',FOCUS);CAREPLANS=Array.isArray(d.careplans)?JSON.parse(JSON.stringify(d.careplans)):[];store.set('careplans',CAREPLANS);
     store.set('done',done);store.set('notes',NOTES);store.set('plans',PLANS);
     applyRemote();
     if(!snap.metadata.fromCache)setSync('ok','Synced ✓');
@@ -761,7 +819,7 @@ async function startSync(){
 }
 
 /* ---------- TABS ---------- */
-function show(tab){$$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));['map','week','planner','games','labs'].forEach(t=>$('#v-'+t).hidden=t!==tab);if(tab==='week')renderWeek();if(tab==='planner')renderPlanner();if(tab==='games')renderGame();window.scrollTo({top:0})}
+function show(tab){$$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));['map','week','planner','careplans','games','labs'].forEach(t=>$('#v-'+t).hidden=t!==tab);if(tab==='careplans')renderCP();if(tab==='week')renderWeek();if(tab==='planner')renderPlanner();if(tab==='games')renderGame();window.scrollTo({top:0})}
 $$('nav.tabs button').forEach(b=>b.onclick=()=>show(b.dataset.tab));
 document.addEventListener('click',e=>{
   const o=e.target.closest('[data-open]');if(o){curWeek=+o.dataset.open;store.set('curWeek',curWeek);show('week');return}
@@ -1088,6 +1146,77 @@ function initTimer(){
   if(T.endAt&&Date.now()>=T.endAt){const auto=tset.auto;tset.auto=false;complete();tset.auto=auto}
   loop();drawTimer();renderFocusNote();
 }
+
+/* ---------- CARE PLANS ---------- */
+const CP_EX=[{"title": "Example: Postpartum hemorrhage risk", "initials": "J.M.", "age": "29", "gtpal": "G3 T3 P0 A0 L3", "ga": "PP day 0, 2 hrs after vaginal birth", "subj": "States \"I feel a little dizzy when I sit up.\" Reports feeling \"gushes\" when she moves.", "obj": "Fundus boggy, 2 cm above the umbilicus and deviated to the right; firms with massage. Lochia rubra, moderate, with small clots. BP 112/68 (baseline 122/78), HR 94. Bladder distended. Newborn 9 lb 4 oz. 19-hour labor augmented with oxytocin.", "dxType": "risk", "problem": "Risk for bleeding", "rt": "uterine atony, bladder distention, a large-for-gestational-age infant and a long oxytocin-augmented labor", "aeb": "", "goal": "Patient will keep a firm, midline fundus at or below the umbilicus, lochia no heavier than moderate, and BP and HR within baseline range throughout the shift.", "iv": [{"do": "Assess fundal height, tone and position and lochia amount every 15 minutes for the first hour, then per protocol.", "why": "Finds uterine atony early; atony is the leading cause of postpartum hemorrhage."}, {"do": "Massage a boggy fundus while supporting the lower uterine segment.", "why": "Stimulates the uterus to contract; supporting the lower segment helps prevent uterine inversion."}, {"do": "Help the patient void; report to the RN if she cannot void so a catheter can be considered.", "why": "A full bladder pushes the uterus up and to the side and keeps it from contracting."}, {"do": "Monitor vital signs, skin color and level of consciousness; report a rising HR or falling BP.", "why": "Tachycardia is often the first sign of hypovolemia; BP drops later."}, {"do": "Count or weigh pads; report saturating 1 pad in 15 minutes or less.", "why": "Measures blood loss (1 g of pad weight is about 1 mL of blood)."}, {"do": "Give uterotonics such as oxytocin as ordered and watch the response.", "why": "Keeps the uterus contracted."}, {"do": "Encourage breastfeeding if not contraindicated.", "why": "Nipple stimulation releases the mother's own oxytocin, which contracts the uterus."}]}, {"title": "Example: Labor pain", "initials": "A.R.", "age": "24", "gtpal": "G1 T0 P0 A0 L0", "ga": "39 weeks, active labor, 6 cm", "subj": "Rates pain 8/10 during contractions, \"like a tight band across my back and belly.\" States \"I want to try to cope without an epidural for now.\"", "obj": "Contractions every 3 minutes lasting 60 seconds, moderate to strong. Grimacing, moaning and gripping the bed rails during contractions. HR 96, BP 128/80. FHR baseline 140 with moderate variability.", "dxType": "actual", "problem": "Acute pain", "rt": "uterine contractions and cervical dilation", "aeb": "pain rated 8/10, grimacing, moaning and guarding during contractions", "goal": "Patient will report pain at a level she finds tolerable (her goal: 5/10 or less) and use at least two coping techniques during contractions within 1 hour.", "iv": [{"do": "Assess pain level, location and character with each set of vital signs and after each intervention.", "why": "Gives a baseline and shows whether interventions are working."}, {"do": "Coach slow-paced breathing and relaxation between contractions.", "why": "Breaks the fear-tension-pain cycle and improves oxygenation for mother and baby."}, {"do": "Encourage position changes (side-lying, hands and knees, birthing ball) and give sacral counterpressure.", "why": "Eases back pain and helps the baby descend."}, {"do": "Offer comfort measures: cool cloth, ice chips, a quiet dim room, a warm shower if allowed.", "why": "Non-drug measures lower the perception of pain (gate control theory)."}, {"do": "Encourage her to void every 2 hours.", "why": "A full bladder adds discomfort and can slow fetal descent."}, {"do": "Respect her birth plan and tell the RN or provider right away if she asks for medication or an epidural.", "why": "Supports her choices and timely pain relief."}]}, {"title": "Example: Breastfeeding difficulty", "initials": "K.T.", "age": "31", "gtpal": "G2 T1 P0 A1 L1", "ga": "PP day 1, cesarean birth", "subj": "\"He won't stay on, and it really hurts when he does.\" States she is worried he is not getting enough milk.", "obj": "Infant latches onto the nipple only, not the areola; audible clicking; latch lasts under 2 minutes. Both nipples reddened, small crack on the left. Infant has had 1 wet diaper in 24 hours (expected for day 1). Mother guards her incision while holding the infant.", "dxType": "actual", "problem": "Ineffective breastfeeding", "rt": "an incorrect latch and positioning discomfort after cesarean birth", "aeb": "a latch that does not last, nipple pain and cracking, and the mother's worry about milk intake", "goal": "Patient will show a correct, sustained latch (wide mouth, areola covered, no clicking) in a comfortable position for at least 2 feedings before discharge.", "iv": [{"do": "Watch a full feeding and score it with a latch tool such as LATCH.", "why": "Pinpoints exactly what needs correcting."}, {"do": "Teach the football hold and use pillows to protect the incision.", "why": "Keeps the baby's weight off the incision and gives better control of the baby's head."}, {"do": "Teach a deep latch: wait for a wide-open mouth, then bring baby to breast chin first.", "why": "A deep latch reduces nipple damage and moves more milk."}, {"do": "Teach her to break the suction with a clean finger before taking the baby off.", "why": "Prevents more nipple damage."}, {"do": "Encourage feeding on demand, 8 to 12 times in 24 hours, and keep a diaper count.", "why": "Frequent feeding builds milk supply; diaper counts show the baby is getting enough."}, {"do": "Refer to the lactation consultant per facility policy.", "why": "Specialized help improves breastfeeding success."}]}, {"title": "Example: Newborn temperature", "initials": "Baby boy S.", "age": "2 hrs", "gtpal": "N/A", "ga": "38 weeks, 2 hrs after birth", "subj": "Mother states \"His hands and feet feel cold.\"", "obj": "Axillary temp 36.4 °C (97.5 °F). Acrocyanosis of hands and feet. Weight 2,750 g. Bathed 20 minutes ago. Room is cool; infant wrapped in one blanket.", "dxType": "risk", "problem": "Risk for imbalanced body temperature", "rt": "large body surface area, little subcutaneous fat, a recent bath and a cool room", "aeb": "", "goal": "Newborn will keep an axillary temperature of 36.5–37.5 °C (97.7–99.5 °F) throughout the shift.", "iv": [{"do": "Check axillary temperature per protocol and 30 minutes after warming measures.", "why": "Catches cold stress early and shows whether warming worked."}, {"do": "Place the baby skin-to-skin with the mother, covered with a warm blanket and a hat.", "why": "Warms the baby by conduction and supports bonding."}, {"do": "Keep the baby dry, put on a hat and swaddle in warm blankets.", "why": "Prevents heat loss by evaporation; the head is a large source of heat loss."}, {"do": "Keep the baby away from drafts, cold windows and cold surfaces; warm the stethoscope and scale.", "why": "Prevents heat loss by convection, radiation and conduction."}, {"do": "Watch for signs of cold stress: low blood sugar, fast breathing, lethargy.", "why": "Cold stress burns through oxygen and glucose."}, {"do": "Teach the parents how to keep the baby warm and why.", "why": "Prepares them to prevent heat loss at home."}]}];
+let cpCur=store.get('cpCur',null),DL=null;
+if(window.claude&&typeof window.claude.use==='function'){window.claude.use('downloads').then(d=>{DL=d;const b=$('#cpDl');if(b)b.hidden=!d}).catch(()=>{})}
+const cpId=()=>'cp'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const curPlan=()=>CAREPLANS.find(p=>p.id===cpCur)||null;
+function blankPlan(){return{id:cpId(),title:'New care plan',ex:false,updated:Date.now(),initials:'',age:'',gtpal:'',ga:'',date:isoDay(new Date()),subj:'',obj:'',dxType:'actual',problem:'',rt:'',aeb:'',goal:'',iv:[{do:'',why:''},{do:'',why:''},{do:'',why:''}],evalStatus:'',evalNotes:''}}
+function cpMsg(t){const m=$('#cpMsg');if(m)m.textContent=t}
+function cpSave(){const p=curPlan();if(p)p.updated=Date.now();store.set('careplans',CAREPLANS);queueSync();
+  if(JSON.stringify(CAREPLANS).length>200000)cpMsg('Your care plans are getting large. Delete ones you no longer need so they keep syncing.')}
+function cpOpen(id){cpCur=id;store.set('cpCur',id);renderCP()}
+function dxText(p){const b=v=>v&&String(v).trim()?String(v).trim():'___';return p.dxType==='risk'?`${b(p.problem)} related to ${b(p.rt)}`:`${b(p.problem)} related to ${b(p.rt)} as evidenced by ${b(p.aeb)}`}
+function cpText(p){const v=x=>x&&String(x).trim()?String(x).trim():'(not filled in)',L=[];
+  L.push('NURSING CARE PLAN: '+v(p.title));
+  L.push(`Patient: ${v(p.initials)} | Age: ${v(p.age)} | G/TPAL: ${v(p.gtpal)} | ${v(p.ga)} | Date: ${p.date?fmtDay(p.date):'(not filled in)'}`);
+  L.push('','ASSESSMENT','Subjective: '+v(p.subj),'Objective: '+v(p.obj));
+  L.push('','NURSING DIAGNOSIS',dxText(p));
+  L.push('','GOAL / EXPECTED OUTCOME',v(p.goal));
+  L.push('','INTERVENTIONS AND RATIONALES');(p.iv||[]).filter(x=>(x.do||'').trim()||(x.why||'').trim()).forEach((x,i)=>L.push(`${i+1}. ${v(x.do)}`,`   Rationale: ${v(x.why)}`));
+  L.push('','EVALUATION',(p.evalStatus?'Goal '+p.evalStatus.toLowerCase()+'. ':'')+v(p.evalNotes));
+  return L.join('\n')}
+function renderCPList(){const ps=[...CAREPLANS].sort((a,b)=>(b.updated||0)-(a.updated||0));
+  $('#cpList').innerHTML=ps.length?ps.map(p=>`<button type="button" class="cpi${p.id===cpCur?' on':''}" data-cpopen="${esc(p.id)}"><b>${esc(p.title||'Untitled plan')}</b><span>${esc(p.problem||'No diagnosis yet')}</span></button>`).join(''):'<p class="muted" style="font-size:.9rem;margin:0">Your saved care plans will show up here.</p>'}
+function cpFit(t){t.style.height='auto';t.style.height=(t.scrollHeight+2)+'px'}
+function renderCPEditor(){const el=$('#cpEditor'),p=curPlan();
+  if(!p){el.innerHTML=`<div class="empty"><span class="ic-bow" aria-hidden="true"></span><b>No care plan open</b>Start a blank plan, or pick an OB example to see what a finished plan looks like.</div>`;return}
+  const F=(f,label,ph,cls)=>`<label class="fld ${cls||''}"><span>${label}</span><input type="text" id="cp-${f}" data-f="${f}" value="${esc(p[f]||'')}" placeholder="${esc(ph)}"${f==='problem'?' list="nandaList"':''}></label>`;
+  const TA=(f,label,ph)=>`<label class="fld wide"><span>${label}</span><textarea id="cp-${f}" data-f="${f}" placeholder="${esc(ph)}">${esc(p[f]||'')}</textarea></label>`;
+  const risk=p.dxType==='risk';
+  el.innerHTML=`
+  <div class="cphead"><input class="cptitle" id="cp-title" data-f="title" value="${esc(p.title||'')}" aria-label="Care plan title">${p.ex?'<span class="tag">Example</span>':''}</div>
+  <div class="cpsec"><h4><span class="step">A</span>Assessment</h4>
+    <div class="formgrid five">${F('initials','Patient initials','e.g. J.M.')}${F('age','Age','')}${F('gtpal','G/TPAL','G2 T1 P0 A0 L1')}${F('ga','Gestation or postpartum day','39 wks / PP day 1')}<label class="fld"><span>Clinical date</span><input type="date" id="cp-date" data-f="date" value="${esc(p.date||'')}"></label></div>
+    <div class="formgrid">${TA('subj','Subjective data (what the patient says)','Quotes and what the patient reports, e.g. "It hurts when he latches."')}${TA('obj','Objective data (what you see and measure)','Vital signs, fundus, lochia, labs, assessment findings')}</div></div>
+  <div class="cpsec"><h4><span class="step">D</span>Nursing diagnosis</h4>
+    <div class="seg" role="group" aria-label="Diagnosis type" style="max-width:360px;margin-bottom:10px"><button type="button" data-dxt="actual" aria-pressed="${!risk}">Actual problem</button><button type="button" data-dxt="risk" aria-pressed="${risk}">Risk for</button></div>
+    <div class="formgrid">${F('problem','Problem (NANDA label)','Start typing, e.g. Acute pain','wide')}${F('rt',risk?'Related to (risk factors)':'Related to (cause)','e.g. uterine contractions','wide')}${risk?'':F('aeb','As evidenced by (signs and symptoms)','e.g. pain 8/10, grimacing','wide')}</div>
+    <div class="dxprev"><small>Your diagnosis statement</small><span id="cpDx">${esc(dxText(p))}</span></div></div>
+  <div class="cpsec"><h4><span class="step">P</span>Goal / expected outcome</h4>
+    <div class="formgrid">${TA('goal','Patient-centered, measurable, with a time frame','Patient will … by …')}</div></div>
+  <div class="cpsec"><h4><span class="step">I</span>Interventions &amp; rationales</h4>
+    <div id="cpIv">${(p.iv||[]).map((v,i)=>`<div class="ivrow"><span class="ivn">${i+1}</span><label class="sr" for="cp-iv-${i}-do">Intervention ${i+1}</label><textarea id="cp-iv-${i}-do" data-iv="${i}" data-k="do" placeholder="Nursing intervention">${esc(v.do||'')}</textarea><label class="sr" for="cp-iv-${i}-why">Rationale ${i+1}</label><textarea id="cp-iv-${i}-why" data-iv="${i}" data-k="why" placeholder="Rationale: why you do it">${esc(v.why||'')}</textarea><button type="button" class="x" data-ivdel="${i}" aria-label="Remove intervention ${i+1}">&times;</button></div>`).join('')}</div>
+    <button type="button" class="btn ghost" id="cpAddIv">+ Add intervention</button></div>
+  <div class="cpsec"><h4><span class="step">E</span>Evaluation</h4>
+    <div class="seg" role="group" aria-label="Goal status" style="max-width:440px;margin-bottom:10px">${['Met','Partially met','Not met'].map(x=>`<button type="button" data-evs="${x}" aria-pressed="${p.evalStatus===x}">Goal ${x.toLowerCase()}</button>`).join('')}</div>
+    <div class="formgrid">${TA('evalNotes','Evaluation notes','Use data, e.g. "Fundus firm, midline, 1 cm below umbilicus at 1400."')}</div></div>
+  <div class="row cpactions"><button type="button" class="btn" id="cpCopy">Copy as text</button><button type="button" class="btn ghost" id="cpDl"${DL?'':' hidden'}>Download .txt</button><button type="button" class="btn ghost" id="cpDup">Duplicate</button><button type="button" class="btn ghost" id="cpDel">Delete</button><span class="muted" id="cpMsg" aria-live="polite"></span></div>
+  <textarea id="cpCopyBox" readonly hidden aria-label="Care plan text to copy"></textarea>`;
+  $$('#cpEditor textarea:not(#cpCopyBox)').forEach(cpFit);
+}
+function renderCP(){if(cpCur&&!curPlan())cpCur=null;if(!cpCur&&CAREPLANS.length)cpCur=[...CAREPLANS].sort((a,b)=>(b.updated||0)-(a.updated||0))[0].id;renderCPList();renderCPEditor()}
+$('#cpEx').innerHTML+=CP_EX.map((e,i)=>`<option value="${i}">${esc(e.title.replace('Example: ',''))}</option>`).join('');
+$('#cpNew').onclick=()=>{const p=blankPlan();CAREPLANS.push(p);cpSave();cpOpen(p.id);const t=$('#cp-title');if(t){t.focus();t.select()}};
+$('#cpEx').onchange=e=>{const i=e.target.value;if(i==='')return;const p=Object.assign(JSON.parse(JSON.stringify(CP_EX[+i])),{id:cpId(),ex:true,updated:Date.now(),date:isoDay(new Date()),evalStatus:'',evalNotes:''});CAREPLANS.push(p);e.target.value='';cpSave();cpOpen(p.id)};
+$('#cpList').addEventListener('click',e=>{const b=e.target.closest('[data-cpopen]');if(b)cpOpen(b.dataset.cpopen)});
+$('#cpEditor').addEventListener('input',e=>{const p=curPlan();if(!p)return;const t=e.target;if(t.tagName==='TEXTAREA'&&t.id!=='cpCopyBox')cpFit(t);
+  if(t.dataset.f){p[t.dataset.f]=t.value;if(['problem','rt','aeb'].includes(t.dataset.f)){const d=$('#cpDx');if(d)d.textContent=dxText(p)}if(t.dataset.f==='title'||t.dataset.f==='problem')renderCPList();cpSave()}
+  else if(t.dataset.iv!=null){const v=p.iv[+t.dataset.iv];if(v){v[t.dataset.k]=t.value;cpSave()}}});
+$('#cpEditor').addEventListener('click',e=>{const p=curPlan();if(!p)return;const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.dxt){p.dxType=t.dataset.dxt;cpSave();renderCPEditor();return}
+  if(t.dataset.evs){p.evalStatus=p.evalStatus===t.dataset.evs?'':t.dataset.evs;cpSave();renderCPEditor();return}
+  if(t.dataset.ivdel!=null){p.iv.splice(+t.dataset.ivdel,1);cpSave();renderCPEditor();return}
+  if(t.id==='cpAddIv'){p.iv.push({do:'',why:''});cpSave();renderCPEditor();const n=$('#cp-iv-'+(p.iv.length-1)+'-do');if(n)n.focus();return}
+  if(t.id==='cpCopy'){const txt=cpText(p),box=$('#cpCopyBox');const fb=()=>{box.hidden=false;box.value=txt;box.focus();box.select();cpMsg('Copy the text from the box below.')};
+    try{navigator.clipboard.writeText(txt).then(()=>cpMsg('Copied ✓'),fb)}catch(err){fb()}return}
+  if(t.id==='cpDl'){if(!DL)return;const slug=(p.title||'care-plan').replace(/^Example:\s*/,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'care-plan';
+    DL.save({filename:'care-plan-'+slug+'.txt',data:cpText(p)}).then(()=>cpMsg('Saved ✓')).catch(err=>{if(err&&err.code==='declined')return;cpMsg(err&&err.code==='rate_limited'?'Finish the open save prompt first.':'Download isn\'t available here. Use Copy as text.')});return}
+  if(t.id==='cpDup'){const c=Object.assign(JSON.parse(JSON.stringify(p)),{id:cpId(),title:(p.title||'Care plan').replace(/^Example:\s*/,'')+' (copy)',ex:false,updated:Date.now()});CAREPLANS.push(c);cpSave();cpOpen(c.id);return}
+  if(t.id==='cpDel'){if(!t.classList.contains('confirm')){t.classList.add('confirm');t.textContent='Tap again to delete';setTimeout(()=>{if(t.isConnected){t.classList.remove('confirm');t.textContent='Delete'}},3000);return}
+    CAREPLANS=CAREPLANS.filter(x=>x.id!==p.id);cpCur=null;store.set('cpCur',null);cpSave();renderCP()}});
 
 /* boot */
 renderMap();renderGame();renderUpcoming();renderPlanner();initTimer();

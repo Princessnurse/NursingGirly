@@ -88,6 +88,7 @@ section.view{padding-block:8px 60px}
 .stack{display:flex;flex-direction:column;gap:18px;min-width:0}
 ul.clean{margin:0;padding-left:1.1em}
 ul.clean li{margin:.25em 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .check{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed var(--line)}
 .check:last-child{border-bottom:0}
 .check input{width:20px;height:20px;accent-color:var(--rose);margin-top:2px;flex:none}
@@ -163,6 +164,23 @@ select,input[type="date"],input[type="time"],input[type="number"],input[type="te
 .strip{width:100%;height:auto;display:block;background:var(--bg);border-radius:12px;border:1px solid var(--line)}
 footer{padding-block:24px 100px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
 
+/* dosage lab */
+.lab.wide{grid-column:1/-1}
+.dgrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px}
+.dq{font-size:1.02rem;font-weight:700;background:var(--bg);border-left:4px solid var(--rose);padding:14px;border-radius:10px;margin:10px 0 12px}
+.dq .rnd{display:block;font-size:.8rem;color:var(--muted);font-weight:700;margin-top:6px}
+.dans{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.dans input{width:130px;font-size:1.05rem;font-weight:700}
+.dans .u{font-weight:800;color:var(--berry)}
+.dsteps{margin:8px 0 0;padding-left:1.3em;font-weight:600;color:var(--ink)}
+.dsteps li{margin:.2em 0;font-family:var(--mono);font-size:.85rem}
+.dscore{font-family:var(--mono);font-weight:700;color:var(--rose);font-size:.85rem}
+.cheat{background:var(--soft);border-radius:16px;padding:14px 16px;font-size:.9rem;min-width:0;align-self:start}
+.cheat h4{font-size:.95rem;margin:0 0 8px}
+.cheat dl{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;margin:0}
+.cheat dt{font-family:var(--mono);font-weight:700;color:var(--berry);font-size:.82rem}
+.cheat dd{margin:0}
+.cheat .fx{font-family:var(--mono);font-weight:700;text-align:center;background:var(--surface);border-radius:10px;padding:8px;margin-bottom:10px;color:var(--rose)}
 /* pomodoro */
 .tfab{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;align-items:center;gap:8px;border:0;background:var(--rose);color:var(--rose-ink);font-weight:800;padding:10px 16px 10px 12px;border-radius:99px;box-shadow:0 10px 28px -10px rgba(240,21,127,.6);font-variant-numeric:tabular-nums}
 .tfab.run{background:var(--berry)}
@@ -246,7 +264,7 @@ nav.tabs button[aria-selected="true"] .badge{background:var(--rose-ink);color:va
 .empty{text-align:center;padding:30px 10px;color:var(--muted)}
 .empty b{display:block;font-family:var(--display);font-size:1.15rem;color:var(--ink);margin-bottom:4px}
 @media (max-width:860px){
-  .hero,.grid2,.labs,.plangrid{grid-template-columns:1fr}
+  .hero,.grid2,.labs,.plangrid,.dgrid{grid-template-columns:1fr}
   .weeks,.gamepick{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:460px){
@@ -360,6 +378,42 @@ nav.tabs button[aria-selected="true"] .badge{background:var(--rose-ink);color:va
   <div class="wrap">
     <div class="sechead"><h2>Practice labs</h2><span class="muted">Hands-on tools for the skills you'll use in clinical</span></div>
     <div class="labs">
+      <div class="panel lab wide">
+        <h3>Dosage calc lab <span class="chip">D/H &times; Q</span></h3>
+        <div class="dgrid">
+          <div>
+            <div class="row"><label for="dType" style="font-weight:700">Problem type</label>
+              <select id="dType">
+                <option value="mixed">Mixed practice</option>
+                <option value="tabs">Tablets (PO)</option>
+                <option value="liquid">Liquids &amp; injections</option>
+                <option value="weight">Weight-based (newborn)</option>
+                <option value="pump">IV pump rate (mL/hr)</option>
+                <option value="drip">Gravity drip (gtt/min)</option>
+              </select>
+              <span class="dscore" id="dScore">0/0 · streak 0</span></div>
+            <div class="dq" id="dQ"></div>
+            <div class="dans"><label for="dAns" class="sr">Your answer</label><input type="number" step="any" inputmode="decimal" id="dAns" placeholder="Answer"><span class="u" id="dUnit"></span>
+              <button class="btn" id="dCheck">Check</button><button class="btn ghost" id="dShow">Show steps</button><button class="btn ghost" id="dNext">New problem</button></div>
+            <div class="result" id="dOut" hidden></div>
+            <p class="muted" style="font-size:.8rem;margin:.8em 0 0">Practice numbers only. In clinical, always check the order, a drug reference and your instructor before giving anything.</p>
+          </div>
+          <div class="cheat">
+            <h4>Formula cheat sheet</h4>
+            <div class="fx">Desired &divide; Have &times; Quantity</div>
+            <dl>
+              <dt>1 kg</dt><dd>2.2 lb</dd>
+              <dt>1 lb</dt><dd>16 oz</dd>
+              <dt>1 g</dt><dd>1,000 mg</dd>
+              <dt>1 mg</dt><dd>1,000 mcg</dd>
+              <dt>1 unit</dt><dd>1,000 milliunits (mU)</dd>
+              <dt>mL/hr</dt><dd>total mL &divide; total hours</dd>
+              <dt>gtt/min</dt><dd>(mL &times; drop factor) &divide; minutes</dd>
+              <dt>Rounding</dt><dd>Under 1 mL: hundredths. Over 1 mL: tenths. Drops and pump rates: whole numbers. Your program's rules win.</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
       <div class="panel lab">
         <h3>Due date lab <span class="chip">Naegele's rule</span></h3>
         <p class="muted" style="margin-top:0">First day of LMP − 3 months + 7 days + 1 year.</p>
@@ -790,6 +844,69 @@ $('#mgGo').onclick=()=>{const rr=+$('#mgRR').value,uo=+$('#mgUO').value,dtr=+$('
   else if(dtr===1){o.className='result warn';o.textContent='Reflexes decreasing. Keep a close eye and report the trend. Calcium gluconate stays at bedside.'}
   else{o.className='result ok';o.textContent='Within safe limits. Keep checking RR, DTRs, urine output, LOC and mag level per policy.'}};
 $('#mgGo').click();
+
+/* ---------- DOSAGE CALC LAB ---------- */
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const rt=(x,d)=>Math.round(x*Math.pow(10,d))/Math.pow(10,d);
+const mlDp=ml=>ml<1?2:1;
+const RND={0:'Round to the nearest whole number.',1:'Round to the nearest tenth.',2:'Round to the nearest hundredth.'};
+const DOSE={
+ tabs(){const m=pick([
+   {d:'Ibuprofen',h:200,o:[400,600,800]},{d:'Acetaminophen',h:325,o:[650]},{d:'Ferrous sulfate',h:325,o:[325,650]},
+   {d:'Nifedipine',h:10,o:[10,20]},{d:'Docusate sodium',h:100,o:[100,200]},{d:'Labetalol',h:100,o:[100,200,300]},{d:'Methyldopa',h:250,o:[250,500]}]);
+   const o=pick(m.o),a=o/m.h;
+   return{q:`Order: ${m.d} ${o} mg PO. On hand: ${m.d} ${m.h} mg tablets. How many tablets will you give?`,unit:'tablet(s)',ans:a,dp:1,
+   steps:[`D/H × Q = ${o} mg ÷ ${m.h} mg × 1 tablet`,`= ${a} tablet(s)`]}},
+ liquid(){const m=pick([
+   {d:'Phytonadione (vitamin K)',o:1,ou:'mg',h:1,hv:0.5,r:'IM to the newborn'},{d:'Phytonadione (vitamin K)',o:0.5,ou:'mg',h:1,hv:0.5,r:'IM to the preterm newborn'},
+   {d:'Methylergonovine',o:0.2,ou:'mg',h:0.2,hv:1,r:'IM'},{d:'Oxytocin',o:10,ou:'units',h:10,hv:1,r:'IM after delivery of the placenta'},
+   {d:'Carboprost',o:250,ou:'mcg',h:250,hv:1,r:'IM'},{d:'Ondansetron',o:4,ou:'mg',h:2,hv:1,r:'IV'},
+   {d:'Morphine',o:2,ou:'mg',h:4,hv:1,r:'IV'},{d:'Morphine',o:3,ou:'mg',h:4,hv:1,r:'IV'},
+   {d:'Terbutaline',o:0.25,ou:'mg',h:1,hv:1,r:'subQ'},{d:'Promethazine',o:12.5,ou:'mg',h:25,hv:1,r:'IM'},
+   {d:'Nalbuphine',o:10,ou:'mg',h:10,hv:1,r:'IV'},{d:'Butorphanol',o:1,ou:'mg',h:2,hv:1,r:'IV'},
+   {d:'Acetaminophen liquid',o:650,ou:'mg',h:160,hv:5,r:'PO'},{d:'Acetaminophen liquid',o:480,ou:'mg',h:160,hv:5,r:'PO'}]);
+   const raw=m.o/m.h*m.hv,dp=mlDp(raw),a=rt(raw,dp);
+   return{q:`Order: ${m.d} ${m.o} ${m.ou} ${m.r}. On hand: ${m.h} ${m.ou} per ${m.hv} mL. How many mL will you give?`,unit:'mL',ans:a,dp,
+   steps:[`D/H × Q = ${m.o} ${m.ou} ÷ ${m.h} ${m.ou} × ${m.hv} mL`,`= ${rt(raw,4)} mL`,`Rounded: ${a} mL`]}},
+ weight(){const m=pick([
+   {d:'Ampicillin',per:50,c:100,lab:'100 mg/mL (reconstituted)',r:'IV'},{d:'Gentamicin',per:4,c:10,lab:'10 mg/mL',r:'IV'},
+   {d:'Naloxone',per:0.1,c:0.4,lab:'0.4 mg/mL',r:'IM'},{d:'Acetaminophen oral suspension',per:15,c:32,lab:'160 mg/5 mL (32 mg/mL)',r:'PO'}]);
+   let kg,wt,ws;
+   if(Math.random()<.5){const g=pick([2650,2980,3150,3400,3620,3875,4100]);kg=g/1000;wt=g+' g';ws=`${g} g ÷ 1000 = ${kg} kg`}
+   else{const lb=pick([5,6,7,8,9]),oz=pick([0,4,8,12]),tl=lb+oz/16;kg=rt(tl/2.2,2);wt=`${lb} lb ${oz} oz`;ws=`${lb} lb + (${oz} ÷ 16) = ${tl} lb ÷ 2.2 = ${kg} kg`}
+   const dose=rt(kg*m.per,2),raw=dose/m.c,dp=mlDp(raw),a=rt(raw,dp);
+   return{q:`Order: ${m.d} ${m.per} mg/kg ${m.r} for a newborn weighing ${wt}. On hand: ${m.lab}. How many mL will you give?`,unit:'mL',ans:a,dp,
+   steps:[`Weight: ${ws}`,`Dose: ${kg} kg × ${m.per} mg/kg = ${dose} mg`,`Volume: ${dose} mg ÷ ${m.c} mg/mL = ${rt(raw,3)} mL`,`Rounded: ${a} mL`]}},
+ pump(){const k=pick(['mag','magload','pit30','pit20','vol','abx']);
+   if(k==='mag'){const g=pick([1,2,3]),[tg,tv]=pick([[40,1000],[20,500]]),per=tv/tg,a=g*per;
+     return{q:`Order: Magnesium sulfate maintenance ${g} g/hr. Bag: ${tg} g in ${tv} mL. Set the pump to how many mL/hr?`,unit:'mL/hr',ans:a,dp:0,steps:[`${tv} mL ÷ ${tg} g = ${per} mL per gram`,`${g} g/hr × ${per} mL/g = ${a} mL/hr`]}}
+   if(k==='magload'){const g=pick([4,6]),v=pick([100,150]),mn=pick([20,30]),a=Math.round(v/mn*60);
+     return{q:`Order: Magnesium sulfate loading dose ${g} g in ${v} mL, infuse over ${mn} minutes. Set the pump to how many mL/hr?`,unit:'mL/hr',ans:a,dp:0,steps:[`${v} mL ÷ ${mn} min = ${rt(v/mn,2)} mL/min`,`× 60 min/hr = ${a} mL/hr`]}}
+   if(k==='pit30'||k==='pit20'){const[u,v]=k==='pit30'?[30,500]:[20,1000],c=u*1000/v,mu=pick([1,2,4,6,8]),a=rt(mu*60/c,1);
+     return{q:`Order: Oxytocin infusion at ${mu} milliunits/min. Bag: ${u} units in ${v} mL. Set the pump to how many mL/hr?`,unit:'mL/hr',ans:a,dp:a%1?1:0,steps:[`${u} units × 1000 = ${u*1000} mU ÷ ${v} mL = ${c} mU/mL`,`${mu} mU/min × 60 = ${mu*60} mU/hr`,`${mu*60} mU/hr ÷ ${c} mU/mL = ${a} mL/hr`]}}
+   if(k==='vol'){const v=pick([500,1000]),h=pick([4,6,8,10,12]),a=Math.round(v/h);
+     return{q:`Order: Lactated Ringer's ${v} mL IV over ${h} hours. Set the pump to how many mL/hr?`,unit:'mL/hr',ans:a,dp:0,steps:[`${v} mL ÷ ${h} hr = ${rt(v/h,2)} mL/hr`,`Rounded: ${a} mL/hr`]}}
+   const m=pick([{d:'Ampicillin 2 g',v:100,mn:30},{d:'Penicillin G 5 million units',v:100,mn:60},{d:'Cefazolin 2 g',v:50,mn:30},{d:'Clindamycin 900 mg',v:50,mn:30}]),a=Math.round(m.v/m.mn*60);
+   return{q:`Order: ${m.d} in ${m.v} mL IV, infuse over ${m.mn} minutes. Set the pump to how many mL/hr?`,unit:'mL/hr',ans:a,dp:0,steps:[`${m.v} mL ÷ ${m.mn} min × 60 min/hr`,`= ${a} mL/hr`]}},
+ drip(){const v=pick([250,500,1000]),h=pick([2,4,6,8]),df=pick([10,15,20,60]),raw=v*df/(h*60),a=Math.round(raw);
+   return{q:`Order: ${v} mL IV over ${h} hours by gravity. The tubing's drop factor is ${df} gtt/mL. How many drops per minute?`,unit:'gtt/min',ans:a,dp:0,
+   steps:[`${v} mL × ${df} gtt/mL = ${v*df} gtt`,`${h} hr × 60 = ${h*60} min`,`${v*df} gtt ÷ ${h*60} min = ${rt(raw,2)}`,`Rounded: ${a} gtt/min`]}}
+};
+let DQ=null,dRight=0,dTot=0,dStreak=0,dAnswered=false;
+function dScore(){$('#dScore').textContent=`${dRight}/${dTot} · streak ${dStreak}`}
+function dNew(){const t=$('#dType').value,k=t==='mixed'?pick(Object.keys(DOSE)):t;DQ=DOSE[k]();dAnswered=false;
+  $('#dQ').innerHTML=esc(DQ.q)+`<span class="rnd">${RND[DQ.dp]}</span>`;$('#dUnit').textContent=DQ.unit;$('#dAns').value='';$('#dOut').hidden=true}
+function dStepsHTML(){return `<ol class="dsteps">${DQ.steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`}
+function dCheck(){const v=parseFloat($('#dAns').value),o=$('#dOut');o.hidden=false;
+  if(isNaN(v)){o.className='result warn';o.textContent='Type a number first.';return}
+  const tol=Math.max(0.5*Math.pow(10,-DQ.dp),Math.abs(DQ.ans)*0.02),ok=Math.abs(v-DQ.ans)<=tol+1e-9;
+  if(!dAnswered){dTot++;if(ok){dRight++;dStreak++}else dStreak=0;dAnswered=true;dScore()}
+  o.className='result '+(ok?'ok':'bad');
+  o.innerHTML=(ok?`Correct! ${DQ.ans} ${esc(DQ.unit)}.`:`Not quite. The answer is ${DQ.ans} ${esc(DQ.unit)}.`)+dStepsHTML()}
+$('#dCheck').onclick=dCheck;$('#dNext').onclick=dNew;$('#dType').onchange=dNew;
+$('#dShow').onclick=()=>{const o=$('#dOut');o.hidden=false;o.className='result';o.innerHTML='Work it out:'+dStepsHTML()};
+$('#dAns').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();dCheck()}});
+dNew();dScore();
 
 /* ---------- PLANNER ---------- */
 const TYPES={exam:'Exam',quiz:'Quiz',assign:'Assignment',clinical:'Clinical',skills:'Skills lab',study:'Study session'};

@@ -6,25 +6,25 @@
 <style>
 /* Layout: sticky tab bar over a blush page; term map grid → week detail → games → labs. Cards only where something is a tappable object. */
 :root{
-  --bg:#fff4f8; --surface:#ffffff; --soft:#fde1eb; --soft2:#fbd0df;
-  --ink:#4a1530; --muted:#8a5a72; --line:#f3c4d6;
-  --rose:#d93a74; --rose-ink:#ffffff; --berry:#8e1d4f;
+  --bg:#fff7fb; --surface:#ffffff; --soft:#ffe6f3; --soft2:#ffc9e6;
+  --ink:#5c0d3c; --muted:#a2557f; --line:#ffd3ea;
+  --rose:#f0157f; --rose-ink:#ffffff; --berry:#c4086b;
   --ok:#1f8a6a; --ok-soft:#d8f3ea; --bad:#c0392b; --bad-soft:#fde2df; --warn:#b7791f; --warn-soft:#fdf0d5;
   --display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
   --body:"Nunito", "Segoe UI", system-ui, sans-serif;
   --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
-  --r:18px; --shadow:0 6px 24px -12px rgba(142,29,79,.35);
+  --r:18px; --shadow:0 6px 24px -12px rgba(240,21,127,.32);
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#1c0d15; --surface:#2a1420; --soft:#3a1a2b; --soft2:#4b2238;
+  --bg:#22101b; --surface:#311729; --soft:#451c37; --soft2:#5a2247;
   --ink:#fde7ef; --muted:#d3a3ba; --line:#55283f;
-  --rose:#ff6fa3; --rose-ink:#2a0a18; --berry:#ffb3cf;
+  --rose:#ff5aac; --rose-ink:#2a0618; --berry:#ffa6d4;
   --ok:#5fd3ac; --ok-soft:#173a2f; --bad:#ff8a7a; --bad-soft:#40191a; --warn:#f3c26b; --warn-soft:#3b2c12;
   --shadow:0 6px 24px -12px rgba(0,0,0,.6); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#1c0d15; --surface:#2a1420; --soft:#3a1a2b; --soft2:#4b2238;
+  --bg:#22101b; --surface:#311729; --soft:#451c37; --soft2:#5a2247;
   --ink:#fde7ef; --muted:#d3a3ba; --line:#55283f;
-  --rose:#ff6fa3; --rose-ink:#2a0a18; --berry:#ffb3cf;
+  --rose:#ff5aac; --rose-ink:#2a0618; --berry:#ffa6d4;
   --ok:#5fd3ac; --ok-soft:#173a2f; --bad:#ff8a7a; --bad-soft:#40191a; --warn:#f3c26b; --warn-soft:#3b2c12;
   --shadow:0 6px 24px -12px rgba(0,0,0,.6); color-scheme:dark}
 
@@ -113,7 +113,7 @@ textarea{width:100%;min-height:120px;border:1px solid var(--line);border-radius:
 .gp[aria-pressed="true"]{border-color:var(--rose);box-shadow:0 0 0 2px var(--rose) inset}
 .stage{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;min-height:340px}
 .filter{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;font-weight:700;font-size:.9rem}
-select,input[type="date"],input[type="number"],input[type="text"]{font:inherit;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:7px 10px}
+select,input[type="date"],input[type="time"],input[type="number"],input[type="text"]{font:inherit;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:7px 10px}
 
 .flash{perspective:1000px;max-width:560px;margin:10px auto}
 .card3d{position:relative;height:240px;transition:transform .5s;transform-style:preserve-3d;cursor:pointer}
@@ -163,8 +163,58 @@ select,input[type="date"],input[type="number"],input[type="text"]{font:inherit;b
 .strip{width:100%;height:auto;display:block;background:var(--bg);border-radius:12px;border:1px solid var(--line)}
 footer{padding-block:24px 40px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
 
+/* planner */
+.badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--berry);color:var(--rose-ink);font-size:.7rem;margin-left:4px}
+nav.tabs button[aria-selected="true"] .badge{background:var(--rose-ink);color:var(--rose)}
+.upcoming{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-bottom:8px}
+.upcoming .uphead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.upcoming h2{font-size:1.25rem}
+.uplist{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.upi{display:flex;gap:10px;align-items:center;background:var(--soft);border-radius:14px;padding:10px 12px;min-width:0}
+.upi .dt{flex:none;width:46px;text-align:center;background:var(--surface);border-radius:10px;padding:4px 0;font-family:var(--mono);line-height:1.1}
+.upi .dt b{display:block;font-size:1.1rem;color:var(--rose)}
+.upi .dt small{font-size:.65rem;text-transform:uppercase;color:var(--muted)}
+.upi .tx{min-width:0}
+.upi .tx b{display:block;overflow-wrap:anywhere}
+.upi .tx span{font-size:.8rem;color:var(--muted);font-weight:700}
+.upi.late{background:var(--bad-soft)}.upi.late .tx span{color:var(--bad)}
+.plangrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:18px;align-items:start}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.fld{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:.85rem;min-width:0}
+.fld.wide{grid-column:1/-1}
+.fld input,.fld select{width:100%}
+.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.calhead h3{margin:0}
+.btn.sm{padding:4px 12px;font-size:1.1rem}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;text-align:center}
+.cal .dow{font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;padding:2px 0}
+.cal button{border:1px solid transparent;background:var(--bg);border-radius:10px;padding:6px 0 4px;font-weight:700;font-size:.85rem;font-variant-numeric:tabular-nums;min-height:44px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.cal button.today{border-color:var(--rose);color:var(--rose)}
+.cal button.pick{background:var(--rose);color:var(--rose-ink)}
+.cal .dots{display:flex;gap:2px;height:6px}
+.cal .dots i{width:6px;height:6px;border-radius:50%;background:var(--berry)}
+.cal button.pick .dots i{background:var(--rose-ink)}
+.pgroup{margin-bottom:14px}
+.pgroup h4{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:4px 0 6px}
+.pgroup.late h4{color:var(--bad)}
+.pi{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px dashed var(--line)}
+.pi:last-child{border-bottom:0}
+.pi input{width:20px;height:20px;accent-color:var(--rose);flex:none}
+.pi label{flex:1;min-width:0;cursor:pointer}
+.pi label b{display:block;overflow-wrap:anywhere}
+.pmeta{font-size:.8rem;color:var(--muted);font-weight:600}
+.pi .when{flex:none;font-size:.75rem;font-weight:800;padding:3px 9px;border-radius:99px;background:var(--soft);color:var(--berry)}
+.pi.soon .when{background:var(--warn-soft);color:var(--warn)}
+.pi.late .when{background:var(--bad-soft);color:var(--bad)}
+.pi.done label{text-decoration:line-through;color:var(--muted)}
+.pi .x{flex:none;border:0;background:transparent;color:var(--muted);font-weight:800;border-radius:8px;padding:4px 8px}
+.pi .x.confirm{background:var(--bad-soft);color:var(--bad)}
+.tdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.t-exam{background:var(--bad)}.t-quiz{background:var(--warn)}.t-assign{background:var(--rose)}.t-clinical{background:var(--ok)}.t-skills{background:var(--berry)}.t-study{background:var(--muted)}
+.empty{text-align:center;padding:30px 10px;color:var(--muted)}
+.empty b{display:block;font-family:var(--display);font-size:1.15rem;color:var(--ink);margin-bottom:4px}
 @media (max-width:860px){
-  .hero,.grid2,.labs{grid-template-columns:1fr}
+  .hero,.grid2,.labs,.plangrid{grid-template-columns:1fr}
   .weeks,.gamepick{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:460px){
@@ -172,6 +222,7 @@ footer{padding-block:24px 40px;color:var(--muted);font-size:.85rem;border-top:1p
   .match{gap:6px}.mt{font-size:.82rem;padding:8px}
   .apgar .ar{grid-template-columns:1fr}
   .bins{grid-template-columns:1fr}
+  .formgrid{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -186,6 +237,7 @@ footer{padding-block:24px 40px;color:var(--muted);font-size:.85rem;border-top:1p
     <nav class="tabs" role="tablist" aria-label="Sections">
       <button role="tab" data-tab="map" aria-selected="true">Term map</button>
       <button role="tab" data-tab="week" aria-selected="false">This week</button>
+      <button role="tab" data-tab="planner" aria-selected="false">Planner<span class="badge" id="planBadge" hidden></span></button>
       <button role="tab" data-tab="games" aria-selected="false">Games</button>
       <button role="tab" data-tab="labs" aria-selected="false">Labs</button>
     </nav>
@@ -209,6 +261,7 @@ footer{padding-block:24px 40px;color:var(--muted);font-size:.85rem;border-top:1p
         <p class="muted" style="margin:.6em 0 0;font-size:.9rem" id="termNote">0 of 0 study tasks checked off</p>
       </div>
     </div>
+    <div class="upcoming" id="upcoming"></div>
     <div class="sechead"><h2>Your 8 weeks</h2><span class="muted">Tap a week to open it</span></div>
     <div class="weeks" id="weekGrid"></div>
   </div>
@@ -219,6 +272,36 @@ footer{padding-block:24px 40px;color:var(--muted);font-size:.85rem;border-top:1p
   <div class="wrap">
     <div class="weekpick" id="weekPick" aria-label="Choose week"></div>
     <div id="weekBody"></div>
+  </div>
+</section>
+
+<!-- PLANNER -->
+<section class="view" id="v-planner" hidden>
+  <div class="wrap">
+    <div class="sechead"><h2>Planner</h2><span class="muted">Exams, quizzes, assignments and clinical days in one place</span></div>
+    <div class="plangrid">
+      <div class="stack">
+        <form class="panel" id="planForm" novalidate>
+          <h3>Add a reminder</h3>
+          <div class="formgrid">
+            <label class="fld wide"><span>What is it?</span><input type="text" id="pTitle" maxlength="120" placeholder="e.g. Exam 1: Normal pregnancy"></label>
+            <label class="fld"><span>Type</span><select id="pType">
+              <option value="exam">Exam</option><option value="quiz">Quiz</option><option value="assign" selected>Assignment</option>
+              <option value="clinical">Clinical</option><option value="skills">Skills lab</option><option value="study">Study session</option></select></label>
+            <label class="fld"><span>Week</span><select id="pWeek"><option value="">Not tied to a week</option></select></label>
+            <label class="fld"><span>Date</span><input type="date" id="pDate"></label>
+            <label class="fld"><span>Time (optional)</span><input type="time" id="pTime"></label>
+          </div>
+          <div class="row"><button class="btn" type="submit">Add to planner</button><span class="muted" id="pMsg" aria-live="polite"></span></div>
+        </form>
+        <div class="panel">
+          <div class="calhead"><button type="button" class="btn ghost sm" id="calPrev" aria-label="Previous month">&lsaquo;</button><h3 id="calTitle"></h3><button type="button" class="btn ghost sm" id="calNext" aria-label="Next month">&rsaquo;</button></div>
+          <div class="cal" id="cal"></div>
+          <p class="muted" style="font-size:.8rem;margin:.6em 0 0">Tap a day to plan something on it. Dots show what's already scheduled.</p>
+        </div>
+      </div>
+      <div class="panel" id="planList"></div>
+    </div>
   </div>
 </section>
 
@@ -407,6 +490,7 @@ const SIGNS=[
 let done=store.get('done',{});
 let NOTES=store.get('notes',null);
 if(!NOTES){NOTES={};for(let n=1;n<=8;n++){const v=store.get('notes-'+n,'');if(v)NOTES[n]=v}}
+let PLANS=store.get('plans',[]);if(!Array.isArray(PLANS))PLANS=[];
 const key=(w,i)=>w+'-'+i;
 function weekPct(w){const t=WEEKS[w-1].tasks.length;let c=0;for(let i=0;i<t;i++)if(done[key(w,i)])c++;return [c,t]}
 function updateTerm(){let c=0,t=0;WEEKS.forEach(w=>{const[a,b]=weekPct(w.n);c+=a;t+=b});const p=t?Math.round(c/t*100):0;$('#termPct').textContent=p+'%';$('#termBar').style.width=p+'%';$('#termNote').textContent=c+' of '+t+' study tasks checked off'}
@@ -441,6 +525,7 @@ function renderWeek(){
         <p class="muted" style="font-size:.8rem;margin:.4em 0 0" id="saved">Saves automatically and syncs to your other devices</p></div>
     </div>
     <div class="stack">
+      ${weekPlansHTML(w.n)}
       <div class="panel"><h3>Study checklist</h3>
         ${w.tasks.map((t,i)=>`<div class="check"><input type="checkbox" id="t${w.n}-${i}" data-k="${key(w.n,i)}" ${done[key(w.n,i)]?'checked':''}><label for="t${w.n}-${i}">${esc(t)}</label></div>`).join('')}
       </div>
@@ -462,13 +547,14 @@ function setSync(s,t){const el=$('#sync');if(el){el.dataset.s=s;el.textContent=t
 function queueSync(){if(!syncRef)return;dirty=true;setSync('saving','Saving…');clearTimeout(syncT);syncT=setTimeout(flush,700)}
 async function flush(){
   if(saving||!dirty||!syncRef)return;saving=true;dirty=false;
-  try{await syncRef.set({done:done,notes:NOTES,updatedAt:Date.now()});retried=false;if(!dirty)setSync('ok','Synced ✓')}
+  try{await syncRef.set({done:done,notes:NOTES,plans:PLANS,updatedAt:Date.now()});retried=false;if(!dirty)setSync('ok','Synced ✓')}
   catch(e){if(e&&e.code==='unavailable'&&!retried){retried=true;dirty=true;saving=false;setTimeout(flush,1200+Math.random()*1200);return}
     setSync('warn','Not synced, saved on this device')}
   saving=false;if(dirty)flush();
 }
 function applyRemote(){
-  renderMap();
+  renderMap();renderUpcoming();
+  if(!$('#v-planner').hidden&&!$('#planForm').contains(document.activeElement))renderPlanList();
   if(!$('#v-week').hidden){
     if(document.activeElement&&document.activeElement.id==='notes'){$$('.check input').forEach(i=>i.checked=!!done[i.dataset.k])}
     else renderWeek();
@@ -488,20 +574,20 @@ async function startSync(){
     if(snap.metadata.hasPendingWrites||dirty||saving)return;
     if(!snap.exists){
       if(!snap.metadata.fromCache&&!settled){settled=true;
-        if(Object.keys(done).length||Object.keys(NOTES).length){dirty=true;setSync('saving','Saving…');flush()}else setSync('ok','Synced ✓')}
+        if(Object.keys(done).length||Object.keys(NOTES).length||PLANS.length){dirty=true;setSync('saving','Saving…');flush()}else setSync('ok','Synced ✓')}
       return;
     }
     if(!snap.metadata.fromCache)settled=true;
     const d=snap.data()||{};
-    done=Object.assign({},d.done||{});NOTES=Object.assign({},d.notes||{});
-    store.set('done',done);store.set('notes',NOTES);
+    done=Object.assign({},d.done||{});NOTES=Object.assign({},d.notes||{});PLANS=Array.isArray(d.plans)?d.plans.map(x=>Object.assign({},x)):[];
+    store.set('done',done);store.set('notes',NOTES);store.set('plans',PLANS);
     applyRemote();
     if(!snap.metadata.fromCache)setSync('ok','Synced ✓');
   },err=>{clearTimeout(timer);syncRef=null;setSync('warn','Not synced, saved on this device')});
 }
 
 /* ---------- TABS ---------- */
-function show(tab){$$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));['map','week','games','labs'].forEach(t=>$('#v-'+t).hidden=t!==tab);if(tab==='week')renderWeek();if(tab==='games')renderGame();window.scrollTo({top:0})}
+function show(tab){$$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));['map','week','planner','games','labs'].forEach(t=>$('#v-'+t).hidden=t!==tab);if(tab==='week')renderWeek();if(tab==='planner')renderPlanner();if(tab==='games')renderGame();window.scrollTo({top:0})}
 $$('nav.tabs button').forEach(b=>b.onclick=()=>show(b.dataset.tab));
 document.addEventListener('click',e=>{
   const o=e.target.closest('[data-open]');if(o){curWeek=+o.dataset.open;store.set('curWeek',curWeek);show('week');return}
@@ -644,8 +730,71 @@ $('#mgGo').onclick=()=>{const rr=+$('#mgRR').value,uo=+$('#mgUO').value,dtr=+$('
   else{o.className='result ok';o.textContent='Within safe limits. Keep checking RR, DTRs, urine output, LOC and mag level per policy.'}};
 $('#mgGo').click();
 
+/* ---------- PLANNER ---------- */
+const TYPES={exam:'Exam',quiz:'Quiz',assign:'Assignment',clinical:'Clinical',skills:'Skills lab',study:'Study session'};
+const pad=n=>String(n).padStart(2,'0');
+const isoDay=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parseDay=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+function dayDiff(s){const t=new Date();return Math.round((parseDay(s)-new Date(t.getFullYear(),t.getMonth(),t.getDate()))/864e5)}
+function whenTxt(s){const n=dayDiff(s);return n<-1?(-n)+' days ago':n===-1?'Yesterday':n===0?'Today':n===1?'Tomorrow':'In '+n+' days'}
+const fmtDay=s=>parseDay(s).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+function fmtTime(t){if(!t)return'';const[h,mi]=t.split(':').map(Number);return new Date(2000,0,1,h,mi).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})}
+const sortPlans=a=>[...a].sort((x,y)=>(x.date+(x.time||'99')).localeCompare(y.date+(y.time||'99')));
+function savePlans(){store.set('plans',PLANS);renderPlanList();renderCal();renderUpcoming();queueSync()}
+function metaTxt(p){return [TYPES[p.type]||'Reminder',p.week?'Week '+p.week:'',fmtDay(p.date),fmtTime(p.time)].filter(Boolean).join(' · ')}
+
+function renderUpcoming(){
+  const open=sortPlans(PLANS.filter(p=>!p.done&&dayDiff(p.date)<=7));
+  const urgent=open.filter(p=>dayDiff(p.date)<=2).length;
+  const b=$('#planBadge');if(b){b.hidden=!urgent;b.textContent=urgent}
+  const el=$('#upcoming');if(!el)return;
+  el.innerHTML=`<div class="uphead"><h2>Coming up</h2><button class="btn ghost" data-tabgo="planner">Open planner</button></div>`+
+   (open.length?`<div class="uplist">${open.slice(0,6).map(p=>{const d=parseDay(p.date),late=dayDiff(p.date)<0;return `<div class="upi${late?' late':''}"><div class="dt"><small>${d.toLocaleDateString(undefined,{month:'short'})}</small><b>${d.getDate()}</b></div><div class="tx"><b><span class="tdot t-${esc(p.type)}"></span>${esc(p.title)}</b><span>${late?'Overdue, ':''}${whenTxt(p.date)}${p.time?' at '+fmtTime(p.time):''}</span></div></div>`}).join('')}</div>`
+   :`<p class="muted" style="margin:0">Nothing due in the next 7 days. Add exams, quizzes and clinical days in the planner and they'll show up here.</p>`);
+}
+function weekPlansHTML(n){const ps=sortPlans(PLANS.filter(p=>+p.week===n));if(!ps.length)return'';
+  return `<div class="panel"><h3>Due this week</h3>${ps.map(p=>`<div class="pi${p.done?' done':''}"><label><b><span class="tdot t-${esc(p.type)}"></span>${esc(p.title)}</b><span class="pmeta">${esc(metaTxt(p))}</span></label><span class="when">${p.done?'Done':whenTxt(p.date)}</span></div>`).join('')}</div>`}
+
+function renderPlanList(){
+  const el=$('#planList');if(!el)return;
+  if(!PLANS.length){el.innerHTML=`<h3>Your reminders</h3><div class="empty"><b>Your planner is empty</b>Add your first exam or assignment on the left. Once your syllabus comes out, add every due date so nothing sneaks up on you.</div>`;return}
+  const s=sortPlans(PLANS),g={late:[],soon:[],later:[],done:[]};
+  s.forEach(p=>{if(p.done)g.done.push(p);else{const n=dayDiff(p.date);(n<0?g.late:n<=7?g.soon:g.later).push(p)}});
+  const item=p=>{const n=dayDiff(p.date),cls=p.done?'done':n<0?'late':n<=2?'soon':'';return `<div class="pi ${cls}"><input type="checkbox" id="pd-${esc(p.id)}" data-pdone="${esc(p.id)}" ${p.done?'checked':''}><label for="pd-${esc(p.id)}"><b><span class="tdot t-${esc(p.type)}"></span>${esc(p.title)}</b><span class="pmeta">${esc(metaTxt(p))}</span></label><span class="when">${p.done?'Done':whenTxt(p.date)}</span><button type="button" class="x" data-pdel="${esc(p.id)}" aria-label="Delete ${esc(p.title)}">&times;</button></div>`};
+  const grp=(k,t)=>g[k].length?`<div class="pgroup ${k}"><h4>${t} (${g[k].length})</h4>${(k==='done'?g[k].slice(-10).reverse():g[k]).map(item).join('')}</div>`:'';
+  el.innerHTML=`<h3>Your reminders</h3>`+grp('late','Overdue')+grp('soon','Next 7 days')+grp('later','Later')+grp('done','Done');
+}
+let calY,calM,pickDay='';{const t=new Date();calY=t.getFullYear();calM=t.getMonth()}
+function renderCal(){
+  const first=new Date(calY,calM,1),days=new Date(calY,calM+1,0).getDate(),today=isoDay(new Date());
+  $('#calTitle').textContent=first.toLocaleDateString(undefined,{month:'long',year:'numeric'});
+  const byDay={};PLANS.forEach(p=>{(byDay[p.date]=byDay[p.date]||[]).push(p)});
+  let h=['S','M','T','W','T','F','S'].map(d=>`<span class="dow">${d}</span>`).join('');
+  for(let i=0;i<first.getDay();i++)h+='<span></span>';
+  for(let d=1;d<=days;d++){const iso=calY+'-'+pad(calM+1)+'-'+pad(d),ps=byDay[iso]||[];
+    h+=`<button type="button" data-day="${iso}" class="${iso===today?'today':''}${iso===pickDay?' pick':''}" aria-label="${fmtDay(iso)}${ps.length?', '+ps.length+' planned':''}">${d}<span class="dots">${ps.slice(0,3).map(p=>`<i class="t-${esc(p.type)}"></i>`).join('')}</span></button>`}
+  $('#cal').innerHTML=h;
+}
+function renderPlanner(){renderCal();renderPlanList()}
+$('#pWeek').innerHTML+=WEEKS.map(w=>`<option value="${w.n}">Week ${w.n}: ${esc(w.title)}</option>`).join('');
+$('#pDate').value=isoDay(new Date());
+$('#calPrev').onclick=()=>{calM--;if(calM<0){calM=11;calY--}renderCal()};
+$('#calNext').onclick=()=>{calM++;if(calM>11){calM=0;calY++}renderCal()};
+$('#cal').onclick=e=>{const b=e.target.closest('[data-day]');if(!b)return;pickDay=b.dataset.day;$('#pDate').value=pickDay;renderCal();$('#pTitle').focus()};
+$('#planForm').addEventListener('submit',e=>{e.preventDefault();
+  const title=$('#pTitle').value.trim(),date=$('#pDate').value,msg=$('#pMsg');
+  if(!title){msg.textContent='Give it a name first.';$('#pTitle').focus();return}
+  if(!date){msg.textContent='Pick a date.';$('#pDate').focus();return}
+  PLANS.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),title,type:$('#pType').value,week:$('#pWeek').value?+$('#pWeek').value:null,date,time:$('#pTime').value||'',done:false});
+  $('#pTitle').value='';$('#pTime').value='';$('#pWeek').value='';msg.textContent='Added ✓';setTimeout(()=>{if(msg.textContent==='Added ✓')msg.textContent=''},2000);savePlans()});
+$('#planList').addEventListener('change',e=>{const id=e.target.dataset.pdone;if(!id)return;const p=PLANS.find(x=>x.id===id);if(p){p.done=e.target.checked;savePlans()}});
+$('#planList').addEventListener('click',e=>{const b=e.target.closest('[data-pdel]');if(!b)return;
+  if(!b.classList.contains('confirm')){b.classList.add('confirm');b.textContent='Delete?';setTimeout(()=>{if(b.isConnected){b.classList.remove('confirm');b.innerHTML='&times;'}},3000);return}
+  PLANS=PLANS.filter(x=>x.id!==b.dataset.pdel);savePlans()});
+document.addEventListener('click',e=>{const g=e.target.closest('[data-tabgo]');if(g)show(g.dataset.tabgo)});
+
 /* boot */
-renderMap();renderGame();
+renderMap();renderGame();renderUpcoming();renderPlanner();
 startSync();
 })();
 </script>

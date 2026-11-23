@@ -161,10 +161,42 @@ select,input[type="date"],input[type="time"],input[type="number"],input[type="te
 .gtpal input{width:100%;text-align:center}
 .scenario{background:var(--bg);border-left:4px solid var(--rose);padding:10px 12px;border-radius:8px;font-size:.94rem;margin-bottom:10px}
 .strip{width:100%;height:auto;display:block;background:var(--bg);border-radius:12px;border:1px solid var(--line)}
-footer{padding-block:24px 40px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
+footer{padding-block:24px 100px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
 
+/* pomodoro */
+.tfab{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;align-items:center;gap:8px;border:0;background:var(--rose);color:var(--rose-ink);font-weight:800;padding:10px 16px 10px 12px;border-radius:99px;box-shadow:0 10px 28px -10px rgba(240,21,127,.6);font-variant-numeric:tabular-nums}
+.tfab.run{background:var(--berry)}
+.tfab svg{flex:none}
+.tpanel{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:20;width:min(340px,calc(100vw - 32px));max-height:calc(100vh - 110px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:16px;box-shadow:var(--shadow)}
+.thead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.thead b{font-family:var(--display);font-size:1.15rem}
+.thead .x{border:0;background:var(--soft);color:var(--berry);border-radius:99px;width:30px;height:30px;font-weight:800}
+.tmodes{display:flex;gap:4px;background:var(--soft);padding:4px;border-radius:99px}
+.tmodes button{flex:1;border:0;background:transparent;border-radius:99px;padding:6px 4px;font-weight:800;font-size:.8rem;color:var(--muted)}
+.tmodes button[aria-pressed="true"]{background:var(--surface);color:var(--rose)}
+.tring{position:relative;width:190px;max-width:100%;margin:14px auto 10px;aspect-ratio:1}
+.tring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.tring .trk{fill:none;stroke:var(--soft);stroke-width:9}
+.tring .tprog{fill:none;stroke:var(--rose);stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset .3s linear}
+.tring.brk .tprog{stroke:var(--ok)}
+.tmid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ttime{font-family:var(--display);font-weight:800;font-size:2.6rem;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1}
+.tlabel{font-size:.75rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.tctl{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.tdots{display:flex;gap:6px;justify-content:center;margin:12px 0 4px}
+.tdots i{width:10px;height:10px;border-radius:50%;background:var(--soft2)}
+.tdots i.on{background:var(--rose)}
+.tmsg{text-align:center;font-size:.85rem;font-weight:700;color:var(--berry);min-height:1.3em;margin:4px 0}
+.tstat{text-align:center;font-size:.8rem;color:var(--muted);margin:0 0 8px}
+.tpanel details{border-top:1px dashed var(--line);padding-top:8px}
+.tpanel summary{cursor:pointer;font-weight:800;font-size:.85rem;color:var(--berry)}
+.tset{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}
+.tset input[type="number"]{width:100%}
+.tchk{display:flex;gap:8px;align-items:center;font-size:.85rem;font-weight:700;margin-top:8px}
+.tchk input{accent-color:var(--rose);width:18px;height:18px}
 /* planner */
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--berry);color:var(--rose-ink);font-size:.7rem;margin-left:4px}
+.badge[hidden]{display:none}
 nav.tabs button[aria-selected="true"] .badge{background:var(--rose-ink);color:var(--rose)}
 .upcoming{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-bottom:8px}
 .upcoming .uphead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
@@ -259,6 +291,7 @@ nav.tabs button[aria-selected="true"] .badge{background:var(--rose-ink);color:va
         <div class="big" id="termPct">0%</div>
         <div class="bar"><i id="termBar" style="width:0%"></i></div>
         <p class="muted" style="margin:.6em 0 0;font-size:.9rem" id="termNote">0 of 0 study tasks checked off</p>
+        <p class="muted" style="margin:.3em 0 0;font-size:.9rem" id="focusNote">0 focus sessions today</p>
       </div>
     </div>
     <div class="upcoming" id="upcoming"></div>
@@ -386,6 +419,33 @@ nav.tabs button[aria-selected="true"] .badge{background:var(--rose-ink);color:va
 </section>
 </main>
 
+<!-- POMODORO -->
+<button class="tfab" id="tFab" aria-expanded="false" aria-controls="tPanel">
+  <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 9v4l2.5 2M9.5 2.5h5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+  <span id="tFabTxt">Study timer</span>
+</button>
+<div class="tpanel" id="tPanel" hidden role="dialog" aria-label="Pomodoro study timer">
+  <div class="thead"><b>Pomodoro</b><button class="x" id="tClose" aria-label="Close timer">&times;</button></div>
+  <div class="tmodes" role="group" aria-label="Timer mode">
+    <button data-tmode="focus" aria-pressed="true">Focus</button><button data-tmode="short" aria-pressed="false">Short break</button><button data-tmode="long" aria-pressed="false">Long break</button>
+  </div>
+  <div class="tring" id="tRing"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="trk" cx="60" cy="60" r="52"/><circle class="tprog" id="tProg" cx="60" cy="60" r="52"/></svg>
+    <div class="tmid"><div class="ttime" id="tTime" aria-live="off">25:00</div><div class="tlabel" id="tLabel">Focus</div></div></div>
+  <div class="tctl"><button class="btn" id="tStart">Start</button><button class="btn ghost" id="tReset">Reset</button><button class="btn ghost" id="tSkip">Skip</button></div>
+  <div class="tdots" id="tDots" aria-label="Focus sessions in this round"></div>
+  <p class="tmsg" id="tMsg" aria-live="polite"></p>
+  <p class="tstat" id="tStat">0 focus sessions today</p>
+  <details><summary>Timer settings</summary>
+    <div class="tset">
+      <label class="fld"><span>Focus min</span><input type="number" id="tsFocus" min="1" max="90"></label>
+      <label class="fld"><span>Short min</span><input type="number" id="tsShort" min="1" max="30"></label>
+      <label class="fld"><span>Long min</span><input type="number" id="tsLong" min="1" max="60"></label>
+    </div>
+    <label class="tchk"><input type="checkbox" id="tsAuto"> Start the next timer automatically</label>
+    <label class="tchk"><input type="checkbox" id="tsSound"> Play a chime when time is up</label>
+  </details>
+</div>
+
 <footer><div class="wrap">Draft built before term starts. Sample content covers general LPN maternity concepts. Always follow your instructor's materials and facility policy. Your checklists and notes sync to your Claude account, so they follow you between your phone and laptop.</div></footer>
 
 <script>
@@ -491,6 +551,7 @@ let done=store.get('done',{});
 let NOTES=store.get('notes',null);
 if(!NOTES){NOTES={};for(let n=1;n<=8;n++){const v=store.get('notes-'+n,'');if(v)NOTES[n]=v}}
 let PLANS=store.get('plans',[]);if(!Array.isArray(PLANS))PLANS=[];
+let FOCUS=store.get('focus',{});if(!FOCUS||typeof FOCUS!=='object')FOCUS={};
 const key=(w,i)=>w+'-'+i;
 function weekPct(w){const t=WEEKS[w-1].tasks.length;let c=0;for(let i=0;i<t;i++)if(done[key(w,i)])c++;return [c,t]}
 function updateTerm(){let c=0,t=0;WEEKS.forEach(w=>{const[a,b]=weekPct(w.n);c+=a;t+=b});const p=t?Math.round(c/t*100):0;$('#termPct').textContent=p+'%';$('#termBar').style.width=p+'%';$('#termNote').textContent=c+' of '+t+' study tasks checked off'}
@@ -547,13 +608,13 @@ function setSync(s,t){const el=$('#sync');if(el){el.dataset.s=s;el.textContent=t
 function queueSync(){if(!syncRef)return;dirty=true;setSync('saving','Saving…');clearTimeout(syncT);syncT=setTimeout(flush,700)}
 async function flush(){
   if(saving||!dirty||!syncRef)return;saving=true;dirty=false;
-  try{await syncRef.set({done:done,notes:NOTES,plans:PLANS,updatedAt:Date.now()});retried=false;if(!dirty)setSync('ok','Synced ✓')}
+  try{await syncRef.set({done:done,notes:NOTES,plans:PLANS,focus:FOCUS,updatedAt:Date.now()});retried=false;if(!dirty)setSync('ok','Synced ✓')}
   catch(e){if(e&&e.code==='unavailable'&&!retried){retried=true;dirty=true;saving=false;setTimeout(flush,1200+Math.random()*1200);return}
     setSync('warn','Not synced, saved on this device')}
   saving=false;if(dirty)flush();
 }
 function applyRemote(){
-  renderMap();renderUpcoming();
+  renderMap();renderUpcoming();renderFocusNote();
   if(!$('#v-planner').hidden&&!$('#planForm').contains(document.activeElement))renderPlanList();
   if(!$('#v-week').hidden){
     if(document.activeElement&&document.activeElement.id==='notes'){$$('.check input').forEach(i=>i.checked=!!done[i.dataset.k])}
@@ -574,12 +635,12 @@ async function startSync(){
     if(snap.metadata.hasPendingWrites||dirty||saving)return;
     if(!snap.exists){
       if(!snap.metadata.fromCache&&!settled){settled=true;
-        if(Object.keys(done).length||Object.keys(NOTES).length||PLANS.length){dirty=true;setSync('saving','Saving…');flush()}else setSync('ok','Synced ✓')}
+        if(Object.keys(done).length||Object.keys(NOTES).length||PLANS.length||Object.keys(FOCUS).length){dirty=true;setSync('saving','Saving…');flush()}else setSync('ok','Synced ✓')}
       return;
     }
     if(!snap.metadata.fromCache)settled=true;
     const d=snap.data()||{};
-    done=Object.assign({},d.done||{});NOTES=Object.assign({},d.notes||{});PLANS=Array.isArray(d.plans)?d.plans.map(x=>Object.assign({},x)):[];
+    done=Object.assign({},d.done||{});NOTES=Object.assign({},d.notes||{});PLANS=Array.isArray(d.plans)?d.plans.map(x=>Object.assign({},x)):[];FOCUS=Object.assign({},d.focus||{});store.set('focus',FOCUS);
     store.set('done',done);store.set('notes',NOTES);store.set('plans',PLANS);
     applyRemote();
     if(!snap.metadata.fromCache)setSync('ok','Synced ✓');
@@ -793,8 +854,65 @@ $('#planList').addEventListener('click',e=>{const b=e.target.closest('[data-pdel
   PLANS=PLANS.filter(x=>x.id!==b.dataset.pdel);savePlans()});
 document.addEventListener('click',e=>{const g=e.target.closest('[data-tabgo]');if(g)show(g.dataset.tabgo)});
 
+/* ---------- POMODORO ---------- */
+const TMODES={focus:'Focus',short:'Short break',long:'Long break'};
+const BREAK_TIPS=['Stand up and stretch.','Drink some water.','Rest your eyes, look at something far away.','Grab a healthy snack.','Take 5 deep breaths.'];
+let tset=Object.assign({focus:25,short:5,long:15,auto:false,sound:true},store.get('tset',{}));
+let T=Object.assign({mode:'focus',remaining:null,endAt:null,cycle:0},store.get('timer',{}));
+let tInt=null,audioCtx=null,wakeLock=null;
+const CIRC=2*Math.PI*52;
+const todayKey=()=>isoDay(new Date());
+const fullMs=m=>Math.max(1,+tset[m]||1)*60000;
+if(T.remaining==null)T.remaining=fullMs(T.mode);
+function saveT(){store.set('timer',T)}
+const mmss=ms=>{const s=Math.max(0,Math.ceil(ms/1000));return pad(Math.floor(s/60))+':'+pad(s%60)};
+function focusWeek(){const t=new Date();let n=0;for(let i=0;i<7;i++){const d=new Date(t.getFullYear(),t.getMonth(),t.getDate()-i);n+=+FOCUS[isoDay(d)]||0}return n}
+function renderFocusNote(){const n=+FOCUS[todayKey()]||0,w=focusWeek();const txt=n+' focus session'+(n===1?'':'s')+' today · '+w+' this week';
+  const a=$('#focusNote');if(a)a.textContent=txt;const b=$('#tStat');if(b)b.textContent=txt+' ('+Math.round(w*(+tset.focus||25)/60*10)/10+' hrs)'}
+function drawTimer(){
+  const rem=T.endAt?T.endAt-Date.now():T.remaining,full=fullMs(T.mode),frac=Math.min(1,Math.max(0,rem/full));
+  $('#tTime').textContent=mmss(rem);$('#tLabel').textContent=TMODES[T.mode];
+  const pr=$('#tProg');pr.style.strokeDasharray=CIRC;pr.style.strokeDashoffset=CIRC*(1-frac);
+  $('#tRing').classList.toggle('brk',T.mode!=='focus');
+  $$('[data-tmode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tmode===T.mode));
+  $('#tStart').textContent=T.endAt?'Pause':(rem<full?'Resume':'Start');
+  $('#tDots').innerHTML=[0,1,2,3].map(i=>`<i class="${i<T.cycle%4||(T.cycle>0&&T.cycle%4===0&&T.mode==='long')?'on':''}"></i>`).join('');
+  const fab=$('#tFab');fab.classList.toggle('run',!!T.endAt);$('#tFabTxt').textContent=T.endAt?mmss(rem)+' '+(T.mode==='focus'?'focus':'break'):(rem<full?mmss(rem)+' paused':'Study timer');
+}
+function chime(){if(!tset.sound||!audioCtx)return;try{const t0=audioCtx.currentTime;[784,988,1175].forEach((f,i)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0.0001,t0+i*.22);g.gain.exponentialRampToValueAtTime(.25,t0+i*.22+.02);g.gain.exponentialRampToValueAtTime(.0001,t0+i*.22+.6);o.connect(g);g.connect(audioCtx.destination);o.start(t0+i*.22);o.stop(t0+i*.22+.65)})}catch(e){}}
+async function lockScreen(on){try{if(on&&navigator.wakeLock&&!wakeLock){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null})}else if(!on&&wakeLock){await wakeLock.release();wakeLock=null}}catch(e){wakeLock=null}}
+function loop(){clearInterval(tInt);if(T.endAt)tInt=setInterval(()=>{if(Date.now()>=T.endAt)complete();else drawTimer()},250)}
+function startT(){if(!audioCtx){try{audioCtx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
+  T.endAt=Date.now()+T.remaining;$('#tMsg').textContent=T.mode==='focus'?'Phone down, notes out. You\'ve got this.':'';saveT();loop();lockScreen(true);drawTimer()}
+function pauseT(){T.remaining=Math.max(0,T.endAt-Date.now());T.endAt=null;saveT();loop();lockScreen(false);drawTimer()}
+function setMode(m,msg){T.mode=m;T.remaining=fullMs(m);T.endAt=null;saveT();loop();$('#tMsg').textContent=msg||'';drawTimer()}
+function complete(){
+  const wasFocus=T.mode==='focus';T.endAt=null;chime();
+  if(wasFocus){T.cycle++;const k=todayKey();FOCUS[k]=(+FOCUS[k]||0)+1;
+    const keys=Object.keys(FOCUS).sort();while(keys.length>120)delete FOCUS[keys.shift()];
+    store.set('focus',FOCUS);renderFocusNote();queueSync();
+    const lng=T.cycle%4===0;setMode(lng?'long':'short',(lng?'4 sessions done! Take a long break. ':'Nice work! Break time. ')+BREAK_TIPS[Math.floor(Math.random()*BREAK_TIPS.length)]);}
+  else setMode('focus','Break\'s over. Back to it!');
+  if(tset.auto)startT();else lockScreen(false);
+}
+function openT(open){$('#tPanel').hidden=!open;$('#tFab').setAttribute('aria-expanded',open);if(open)$('#tStart').focus()}
+function initTimer(){
+  $('#tsFocus').value=tset.focus;$('#tsShort').value=tset.short;$('#tsLong').value=tset.long;$('#tsAuto').checked=!!tset.auto;$('#tsSound').checked=!!tset.sound;
+  $('#tFab').onclick=()=>openT($('#tPanel').hidden);$('#tClose').onclick=()=>{openT(false);$('#tFab').focus()};
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#tPanel').hidden){openT(false);$('#tFab').focus()}});
+  $('#tStart').onclick=()=>T.endAt?pauseT():startT();
+  $('#tReset').onclick=()=>setMode(T.mode);
+  $('#tSkip').onclick=()=>{if(T.mode==='focus')setMode(T.cycle%4===3?'long':'short');else setMode('focus')};
+  $$('[data-tmode]').forEach(b=>b.onclick=()=>setMode(b.dataset.tmode));
+  const upd=()=>{tset={focus:Math.min(90,Math.max(1,+$('#tsFocus').value||25)),short:Math.min(30,Math.max(1,+$('#tsShort').value||5)),long:Math.min(60,Math.max(1,+$('#tsLong').value||15)),auto:$('#tsAuto').checked,sound:$('#tsSound').checked};store.set('tset',tset);if(!T.endAt){T.remaining=fullMs(T.mode);saveT()}drawTimer();renderFocusNote()};
+  ['tsFocus','tsShort','tsLong','tsAuto','tsSound'].forEach(id=>$('#'+id).addEventListener('change',upd));
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&T.endAt)lockScreen(true)});
+  if(T.endAt&&Date.now()>=T.endAt){const auto=tset.auto;tset.auto=false;complete();tset.auto=auto}
+  loop();drawTimer();renderFocusNote();
+}
+
 /* boot */
-renderMap();renderGame();renderUpcoming();renderPlanner();
+renderMap();renderGame();renderUpcoming();renderPlanner();initTimer();
 startSync();
 })();
 </script>

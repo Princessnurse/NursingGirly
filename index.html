@@ -1,0 +1,600 @@
+<title>Bloom OB Study Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: sticky tab bar over a blush page; term map grid → week detail → games → labs. Cards only where something is a tappable object. */
+:root{
+  --bg:#fff4f8; --surface:#ffffff; --soft:#fde1eb; --soft2:#fbd0df;
+  --ink:#4a1530; --muted:#8a5a72; --line:#f3c4d6;
+  --rose:#d93a74; --rose-ink:#ffffff; --berry:#8e1d4f;
+  --ok:#1f8a6a; --ok-soft:#d8f3ea; --bad:#c0392b; --bad-soft:#fde2df; --warn:#b7791f; --warn-soft:#fdf0d5;
+  --display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Nunito", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  --r:18px; --shadow:0 6px 24px -12px rgba(142,29,79,.35);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1c0d15; --surface:#2a1420; --soft:#3a1a2b; --soft2:#4b2238;
+  --ink:#fde7ef; --muted:#d3a3ba; --line:#55283f;
+  --rose:#ff6fa3; --rose-ink:#2a0a18; --berry:#ffb3cf;
+  --ok:#5fd3ac; --ok-soft:#173a2f; --bad:#ff8a7a; --bad-soft:#40191a; --warn:#f3c26b; --warn-soft:#3b2c12;
+  --shadow:0 6px 24px -12px rgba(0,0,0,.6); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1c0d15; --surface:#2a1420; --soft:#3a1a2b; --soft2:#4b2238;
+  --ink:#fde7ef; --muted:#d3a3ba; --line:#55283f;
+  --rose:#ff6fa3; --rose-ink:#2a0a18; --berry:#ffb3cf;
+  --ok:#5fd3ac; --ok-soft:#173a2f; --bad:#ff8a7a; --bad-soft:#40191a; --warn:#f3c26b; --warn-soft:#3b2c12;
+  --shadow:0 6px 24px -12px rgba(0,0,0,.6); color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--rose);outline-offset:2px;border-radius:8px}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:var(--rose)}
+.muted{color:var(--muted)}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topin{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:1.2rem;color:var(--berry)}
+.brand svg{flex:none}
+nav.tabs{display:flex;gap:4px;background:var(--soft);padding:4px;border-radius:999px;overflow-x:auto;max-width:100%}
+nav.tabs button{border:0;background:transparent;padding:7px 14px;border-radius:999px;font-weight:800;font-size:.9rem;white-space:nowrap;color:var(--muted)}
+nav.tabs button[aria-selected="true"]{background:var(--rose);color:var(--rose-ink)}
+
+/* hero */
+.hero{padding-block:36px 20px;display:grid;grid-template-columns:1.4fr 1fr;gap:28px;align-items:center}
+.hero h1{font-size:clamp(2rem,5vw,3.3rem);font-weight:800;letter-spacing:-.02em;color:var(--berry)}
+.hero h1 em{font-style:normal;color:var(--rose)}
+.hero p{max-width:58ch;margin:.7em 0 0}
+.draft{display:inline-flex;gap:8px;align-items:center;background:var(--warn-soft);color:var(--warn);font-weight:800;font-size:.8rem;padding:6px 12px;border-radius:999px;margin-bottom:12px}
+.meter{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+.meter .big{font-family:var(--display);font-size:2.6rem;font-weight:800;color:var(--rose);font-variant-numeric:tabular-nums}
+.bar{height:12px;background:var(--soft);border-radius:99px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--rose),var(--berry));border-radius:99px;transition:width .4s}
+
+/* term map */
+section.view{padding-block:8px 60px}
+.sechead{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin:18px 0 14px}
+.sechead h2{font-size:1.6rem}
+.weeks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.wk{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px;transition:transform .15s,box-shadow .15s;min-width:0}
+.wk:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.wk .num{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
+.wk h3{font-size:1.08rem;color:var(--ink)}
+.wk .tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-size:.72rem;font-weight:700;background:var(--soft);color:var(--berry);padding:2px 8px;border-radius:99px}
+.wk .prog{display:flex;align-items:center;gap:8px;margin-top:auto;font-size:.8rem;font-weight:700;color:var(--muted)}
+.wk .prog .bar{flex:1;height:7px;margin:0}
+.wk.exam{background:var(--soft)}
+.wk.exam .tag{background:var(--surface)}
+
+/* week detail */
+.weekpick{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.weekpick button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 12px;font-weight:800;font-size:.85rem}
+.weekpick button[aria-pressed="true"]{background:var(--rose);border-color:var(--rose);color:var(--rose-ink)}
+.wkhead h2{font-size:clamp(1.6rem,4vw,2.3rem);color:var(--berry)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;margin-top:18px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0}
+.panel h3{font-size:1.1rem;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.stack{display:flex;flex-direction:column;gap:18px;min-width:0}
+ul.clean{margin:0;padding-left:1.1em}
+ul.clean li{margin:.25em 0}
+.check{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed var(--line)}
+.check:last-child{border-bottom:0}
+.check input{width:20px;height:20px;accent-color:var(--rose);margin-top:2px;flex:none}
+.check label{cursor:pointer}
+.check input:checked + label{text-decoration:line-through;color:var(--muted)}
+.slot{display:flex;align-items:center;gap:10px;padding:10px 12px;border:2px dashed var(--soft2);border-radius:12px;margin-bottom:8px;font-weight:700;color:var(--muted);font-size:.92rem}
+.slot b{color:var(--ink)}
+.mnemo{background:var(--soft);border-radius:14px;padding:14px}
+.mnemo .word{font-family:var(--display);font-weight:800;font-size:1.5rem;color:var(--rose);letter-spacing:.06em}
+.mnemo dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:8px 0 0}
+.mnemo dt{font-family:var(--mono);font-weight:700;color:var(--berry)}
+.mnemo dd{margin:0}
+textarea{width:100%;min-height:120px;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--bg);color:var(--ink);font:inherit;resize:vertical}
+.btn{border:0;background:var(--rose);color:var(--rose-ink);font-weight:800;padding:9px 16px;border-radius:99px}
+.btn.ghost{background:var(--soft);color:var(--berry)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* games */
+.gamepick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.gp{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:14px;text-align:left;min-width:0}
+.gp b{display:block;font-family:var(--display);font-size:1.05rem}
+.gp span{font-size:.84rem;color:var(--muted)}
+.gp[aria-pressed="true"]{border-color:var(--rose);box-shadow:0 0 0 2px var(--rose) inset}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;min-height:340px}
+.filter{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;font-weight:700;font-size:.9rem}
+select,input[type="date"],input[type="number"],input[type="text"]{font:inherit;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:7px 10px}
+
+.flash{perspective:1000px;max-width:560px;margin:10px auto}
+.card3d{position:relative;height:240px;transition:transform .5s;transform-style:preserve-3d;cursor:pointer}
+.card3d.flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;gap:8px}
+.face.front{background:linear-gradient(135deg,var(--soft),var(--soft2));}
+.face.front p{font-family:var(--display);font-size:1.35rem;font-weight:700;margin:0}
+.face.back{background:var(--surface);border:2px solid var(--rose);transform:rotateY(180deg);overflow:auto}
+.face small{font-size:.75rem;color:var(--muted);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+
+.qopts{display:grid;gap:10px;margin-top:14px}
+.qopt{text-align:left;border:1px solid var(--line);background:var(--bg);padding:12px 14px;border-radius:12px;font-weight:700}
+.qopt.right{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.qopt.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.rationale{margin-top:12px;padding:12px;border-radius:12px;background:var(--soft);font-size:.94rem}
+.score{font-family:var(--mono);font-weight:700;color:var(--rose)}
+
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mt{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:10px 12px;text-align:left;font-weight:700;font-size:.92rem;min-height:52px}
+.mt.sel{border-color:var(--rose);box-shadow:0 0 0 2px var(--rose) inset}
+.mt.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);opacity:.75}
+.mt.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.sortq{font-family:var(--display);font-size:1.3rem;font-weight:700;text-align:center;padding:24px 12px;background:var(--soft);border-radius:16px;margin:10px 0}
+.bins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.bin{border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px;font-weight:800;min-width:0}
+.bin small{display:block;font-weight:600;color:var(--muted);font-size:.78rem}
+
+/* labs */
+.labs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.lab h3 .chip{font-family:var(--mono);font-size:.7rem;background:var(--soft);color:var(--berry);padding:2px 8px;border-radius:99px;font-weight:700}
+.result{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--soft);font-weight:700}
+.result.ok{background:var(--ok-soft);color:var(--ok)}
+.result.bad{background:var(--bad-soft);color:var(--bad)}
+.result.warn{background:var(--warn-soft);color:var(--warn)}
+.apgar{display:grid;gap:8px}
+.apgar .ar{display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center}
+.apgar .ar b{font-size:.9rem}
+.seg{display:flex;gap:4px;flex-wrap:wrap}
+.seg button{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:5px 8px;font-size:.78rem;font-weight:700;flex:1 1 0;min-width:0}
+.seg button[aria-pressed="true"]{background:var(--rose);color:var(--rose-ink);border-color:var(--rose)}
+.gtpal{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.gtpal label{display:flex;flex-direction:column;align-items:center;font-family:var(--mono);font-weight:700;color:var(--berry);gap:4px}
+.gtpal input{width:100%;text-align:center}
+.scenario{background:var(--bg);border-left:4px solid var(--rose);padding:10px 12px;border-radius:8px;font-size:.94rem;margin-bottom:10px}
+.strip{width:100%;height:auto;display:block;background:var(--bg);border-radius:12px;border:1px solid var(--line)}
+footer{padding-block:24px 40px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
+
+@media (max-width:860px){
+  .hero,.grid2,.labs{grid-template-columns:1fr}
+  .weeks,.gamepick{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:460px){
+  .weeks{grid-template-columns:1fr}
+  .match{gap:6px}.mt{font-size:.82rem;padding:8px}
+  .apgar .ar{grid-template-columns:1fr}
+  .bins{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top">
+  <div class="wrap topin">
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><g fill="var(--rose)"><circle cx="16" cy="8" r="6"/><circle cx="24" cy="15" r="6"/><circle cx="21" cy="24" r="6"/><circle cx="11" cy="24" r="6"/><circle cx="8" cy="15" r="6"/></g><circle cx="16" cy="17" r="4.5" fill="var(--bg)"/></svg>
+      Bloom OB
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" data-tab="map" aria-selected="true">Term map</button>
+      <button role="tab" data-tab="week" aria-selected="false">This week</button>
+      <button role="tab" data-tab="games" aria-selected="false">Games</button>
+      <button role="tab" data-tab="labs" aria-selected="false">Labs</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<!-- TERM MAP -->
+<section class="view" id="v-map">
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <span class="draft">● Rough draft, sample content</span>
+        <h1>Term 5: <em>Maternity</em> &amp; OB, one week at a time.</h1>
+        <p>Each week has a page for your lectures, PowerPoints and notes, plus a checklist, a memory trick, and games and labs for practice. The topics below follow a typical LPN maternity course. Once your syllabus arrives, they get swapped for your instructor's real schedule.</p>
+      </div>
+      <div class="meter" aria-live="polite">
+        <div class="eyebrow">Term progress</div>
+        <div class="big" id="termPct">0%</div>
+        <div class="bar"><i id="termBar" style="width:0%"></i></div>
+        <p class="muted" style="margin:.6em 0 0;font-size:.9rem" id="termNote">0 of 0 study tasks checked off</p>
+      </div>
+    </div>
+    <div class="sechead"><h2>Your 8 weeks</h2><span class="muted">Tap a week to open it</span></div>
+    <div class="weeks" id="weekGrid"></div>
+  </div>
+</section>
+
+<!-- WEEK -->
+<section class="view" id="v-week" hidden>
+  <div class="wrap">
+    <div class="weekpick" id="weekPick" aria-label="Choose week"></div>
+    <div id="weekBody"></div>
+  </div>
+</section>
+
+<!-- GAMES -->
+<section class="view" id="v-games" hidden>
+  <div class="wrap">
+    <div class="sechead"><h2>Study games</h2><span class="muted">Filter by week to study only what's been covered</span></div>
+    <div class="gamepick" id="gamePick">
+      <button class="gp" data-game="flash" aria-pressed="true"><b>Flashcards</b><span>Tap to flip, then mark it got it or review</span></button>
+      <button class="gp" data-game="quiz" aria-pressed="false"><b>NCLEX-PN quiz</b><span>Multiple choice with rationales</span></button>
+      <button class="gp" data-game="match" aria-pressed="false"><b>Match up</b><span>Pair each term with its meaning</span></button>
+      <button class="gp" data-game="sort" aria-pressed="false"><b>Sign sorter</b><span>Presumptive, probable or positive?</span></button>
+    </div>
+    <div class="filter"><label for="wkFilter">Weeks:</label>
+      <select id="wkFilter"><option value="all">All weeks</option></select>
+    </div>
+    <div class="stage" id="stage"></div>
+  </div>
+</section>
+
+<!-- LABS -->
+<section class="view" id="v-labs" hidden>
+  <div class="wrap">
+    <div class="sechead"><h2>Practice labs</h2><span class="muted">Hands-on tools for the skills you'll use in clinical</span></div>
+    <div class="labs">
+      <div class="panel lab">
+        <h3>Due date lab <span class="chip">Naegele's rule</span></h3>
+        <p class="muted" style="margin-top:0">First day of LMP − 3 months + 7 days + 1 year.</p>
+        <div class="row"><label for="lmp">LMP</label><input type="date" id="lmp" value="2026-03-10"><button class="btn" id="calcEdd">Calculate EDD</button></div>
+        <div class="result" id="eddOut"></div>
+      </div>
+
+      <div class="panel lab">
+        <h3>GTPAL lab <span class="chip">OB history</span></h3>
+        <div class="scenario" id="gtScen"></div>
+        <div class="gtpal">
+          <label>G<input type="number" min="0" id="g-G"></label>
+          <label>T<input type="number" min="0" id="g-T"></label>
+          <label>P<input type="number" min="0" id="g-P"></label>
+          <label>A<input type="number" min="0" id="g-A"></label>
+          <label>L<input type="number" min="0" id="g-L"></label>
+        </div>
+        <div class="row" style="margin-top:10px"><button class="btn" id="gtCheck">Check</button><button class="btn ghost" id="gtNext">New patient</button></div>
+        <div class="result" id="gtOut" hidden></div>
+      </div>
+
+      <div class="panel lab">
+        <h3>APGAR lab <span class="chip">1 &amp; 5 min</span></h3>
+        <div class="apgar" id="apgar"></div>
+        <div class="result" id="apOut"></div>
+      </div>
+
+      <div class="panel lab">
+        <h3>Fetal strip lab <span class="chip">VEAL CHOP</span></h3>
+        <svg class="strip" id="strip" viewBox="0 0 400 170" role="img" aria-label="Fetal heart rate and contraction tracing"></svg>
+        <p style="margin:.6em 0 .3em;font-weight:700">What pattern is this, and what do you do first?</p>
+        <div class="qopts" id="stripOpts" style="margin-top:6px"></div>
+        <div class="result" id="stripOut" hidden></div>
+      </div>
+
+      <div class="panel lab">
+        <h3>Postpartum fundus lab <span class="chip">BUBBLE-HE</span></h3>
+        <div class="row"><label for="ppDay">Postpartum day</label><input type="number" id="ppDay" min="0" max="14" value="2" style="width:80px">
+          <label for="ppFind">Finding</label>
+          <select id="ppFind"><option value="firm">Firm, midline</option><option value="boggy">Boggy</option><option value="right">Firm, displaced to the right</option></select>
+          <button class="btn" id="ppGo">Assess</button></div>
+        <div class="result" id="ppOut"></div>
+      </div>
+
+      <div class="panel lab">
+        <h3>Mag sulfate safety lab <span class="chip">Preeclampsia</span></h3>
+        <div class="row">
+          <label for="mgRR">RR</label><input type="number" id="mgRR" value="14" style="width:70px">
+          <label for="mgUO">Urine mL/hr</label><input type="number" id="mgUO" value="35" style="width:80px">
+          <label for="mgDTR">DTRs</label><select id="mgDTR"><option value="2">2+ normal</option><option value="1">1+ decreased</option><option value="0">0 absent</option></select>
+          <button class="btn" id="mgGo">Check</button>
+        </div>
+        <div class="result" id="mgOut"></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">Draft built before term starts. Sample content covers general LPN maternity concepts. Always follow your instructor's materials and facility policy. Your checklists and notes are saved in this browser only.</div></footer>
+
+<script>
+(function(){
+const store={get(k,d){try{const v=localStorage.getItem('bloom:'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('bloom:'+k,JSON.stringify(v))}catch(e){}}};
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- WEEK DATA (sample — replace with syllabus) ---------- */
+const WEEKS=[
+ {n:1,title:"Foundations of Maternity Nursing",tags:["Reproductive A&P","Conception","Fetal development"],
+  goals:["Describe the menstrual cycle and ovulation","Trace fertilization → implantation","Name fetal circulation shunts (ductus venosus, foramen ovale, ductus arteriosus)","Know the role of the placenta, amniotic fluid & umbilical cord (2 arteries, 1 vein)"],
+  mnemo:{word:"AVA",lines:[["A","Artery (carries deoxygenated blood away from fetus)"],["V","Vein, one, carries oxygenated blood to fetus"],["A","Artery, the second one"]]},
+  tasks:["Read assigned chapter(s)","Review lecture PowerPoint","Draw fetal circulation from memory","Flashcards: Week 1 deck"]},
+ {n:2,title:"Normal Pregnancy & Prenatal Care",tags:["Signs of pregnancy","Naegele's rule","GTPAL","Nutrition"],
+  goals:["Sort presumptive, probable & positive signs","Calculate EDD with Naegele's rule","Document OB history with G/TPAL","Explain prenatal visit schedule, labs & fundal height","Teach folic acid, iron, and danger signs"],
+  mnemo:{word:"GTPAL",lines:[["G","Gravida: total pregnancies (including current)"],["T","Term births (37+ weeks)"],["P","Preterm births (20–36 6/7 weeks)"],["A","Abortions/miscarriages (before 20 weeks)"],["L","Living children"]]},
+  tasks:["Read assigned chapter(s)","Review lecture PowerPoint","Do 5 GTPAL lab patients","Play Sign Sorter","Practice the Naegele due date lab"]},
+ {n:3,title:"High-Risk Pregnancy",tags:["Preeclampsia","GDM","Bleeding","Rh"],
+  goals:["Compare placenta previa vs. abruptio placentae","Recognize preeclampsia, eclampsia & HELLP","Monitor for magnesium sulfate toxicity","Explain gestational diabetes screening & care","Know when RhoGAM is given"],
+  mnemo:{word:"HELLP",lines:[["H","Hemolysis"],["EL","Elevated Liver enzymes"],["LP","Low Platelets"]]},
+  tasks:["Read assigned chapter(s)","Review lecture PowerPoint","Make previa vs. abruption chart","Mag sulfate safety lab"]},
+ {n:4,title:"Labor & Birth",tags:["5 Ps","Stages of labor","Fetal monitoring"],
+  goals:["Name the 5 Ps of labor","Describe the 4 stages of labor","Interpret FHR baseline 110–160 & decelerations","Describe nursing care in each stage","Compare pharmacologic & non-pharm pain relief"],
+  mnemo:{word:"VEAL CHOP",lines:[["V → C","Variable decels → Cord compression"],["E → H","Early decels → Head compression"],["A → O","Accelerations → OK / Oxygenated"],["L → P","Late decels → Placental insufficiency"]]},
+  tasks:["Read assigned chapter(s)","Review lecture PowerPoint","Fetal strip lab ×5","Quiz: Week 4"]},
+ {n:5,title:"Labor Complications & Interventions",tags:["Preterm labor","Cord prolapse","Induction","Cesarean"],
+  goals:["Identify signs of preterm labor & PROM","Prioritize actions for umbilical cord prolapse","Monitor oxytocin (Pitocin) induction safely","Describe pre- and post-op care for cesarean birth"],
+  mnemo:{word:"COAT",lines:[["C","Color of amniotic fluid (clear vs. green/meconium)"],["O","Odor (foul = infection)"],["A","Amount"],["T","Time membranes ruptured"]]},
+  tasks:["Read assigned chapter(s)","Review lecture PowerPoint","Write cord prolapse priority steps","Flashcards: Week 5 deck"]},
+ {n:6,title:"Postpartum Care",tags:["BUBBLE-HE","Lochia","PPH","Mood"],
+  goals:["Perform a BUBBLE-HE assessment","Describe lochia rubra → serosa → alba","Recognize & respond to postpartum hemorrhage","Compare baby blues, PPD & postpartum psychosis"],
+  mnemo:{word:"BUBBLE-HE",lines:[["B","Breasts"],["U","Uterus (fundus)"],["B","Bladder"],["B","Bowel"],["L","Lochia"],["E","Episiotomy / incision"],["H","Homans' sign / Hemorrhoids"],["E","Emotional status"]]},
+  tasks:["Read assigned chapter(s)","Review lecture PowerPoint","Postpartum fundus lab","Match Up: Week 6"]},
+ {n:7,title:"The Newborn",tags:["APGAR","Newborn meds","Feeding","Jaundice"],
+  goals:["Score APGAR at 1 and 5 minutes","Know newborn normal vital signs","Give vitamin K, erythromycin eye ointment & Hep B","Support breastfeeding & formula feeding","Tell physiologic jaundice from pathologic"],
+  mnemo:{word:"APGAR",lines:[["A","Appearance (color)"],["P","Pulse"],["G","Grimace (reflex irritability)"],["A","Activity (muscle tone)"],["R","Respiration"]]},
+  tasks:["Read assigned chapter(s)","Review lecture PowerPoint","APGAR lab ×5","Quiz: Week 7"]},
+ {n:8,title:"Review & Final Exam",tags:["Women's health","Cumulative review","Final"],exam:true,
+  goals:["Review contraception & menopause basics (if covered)","Re-do missed quiz questions","Practice all labs once more","Rest & eat before exam day"],
+  mnemo:{word:"REST",lines:[["R","Review weak weeks first"],["E","Explain topics out loud"],["S","Sleep the night before"],["T","Trust your first answer"]]},
+  tasks:["Full quiz: all weeks","All flashcards marked got it","Re-read my weekly notes","Final exam"]}
+];
+
+/* ---------- CARD / QUIZ BANK ---------- */
+const CARDS=[
+ {w:1,q:"Umbilical cord vessels",a:"2 arteries + 1 vein (AVA). Wharton's jelly cushions them."},
+ {w:1,q:"Foramen ovale",a:"Fetal shunt between right and left atria; bypasses the lungs. Closes after birth."},
+ {w:1,q:"Ductus arteriosus",a:"Fetal shunt from pulmonary artery to aorta; bypasses the lungs."},
+ {w:1,q:"Ductus venosus",a:"Fetal shunt that lets most blood bypass the liver."},
+ {w:1,q:"Where does fertilization occur?",a:"In the ampulla (outer third) of the fallopian tube."},
+ {w:2,q:"Naegele's rule",a:"First day of LMP − 3 months + 7 days (+1 year)."},
+ {w:2,q:"Chadwick's sign",a:"Bluish-purple cervix/vagina. A probable sign."},
+ {w:2,q:"Goodell's sign",a:"Softening of the cervix. A probable sign."},
+ {w:2,q:"Hegar's sign",a:"Softening of the lower uterine segment. A probable sign."},
+ {w:2,q:"Quickening",a:"Mother's first perception of fetal movement (~16–20 wks). A presumptive sign."},
+ {w:2,q:"Fundal height at 20 weeks",a:"At the umbilicus. From 20–36 wks, height in cm ≈ weeks gestation."},
+ {w:3,q:"Placenta previa",a:"PAINLESS bright red bleeding. NO vaginal exams."},
+ {w:3,q:"Abruptio placentae",a:"PAINFUL bleeding (may be hidden), rigid board-like abdomen."},
+ {w:3,q:"Mag sulfate antidote",a:"Calcium gluconate. Keep at bedside."},
+ {w:3,q:"Signs of mag toxicity",a:"Absent DTRs, RR < 12, urine output < 30 mL/hr, decreased LOC."},
+ {w:3,q:"RhoGAM timing",a:"For Rh-negative mother: ~28 weeks, and within 72 hrs after birth if baby is Rh-positive."},
+ {w:4,q:"Normal FHR baseline",a:"110–160 bpm."},
+ {w:4,q:"Late decelerations",a:"Placental insufficiency. Position on left side, stop oxytocin, O₂, IV fluids, notify provider."},
+ {w:4,q:"The 5 Ps of labor",a:"Passenger, Passageway, Powers, Position, Psyche."},
+ {w:4,q:"Stage 3 of labor",a:"From birth of the baby to delivery of the placenta."},
+ {w:5,q:"Umbilical cord prolapse: first action",a:"Lift presenting part off cord with gloved hand; knee-chest or Trendelenburg; call for help."},
+ {w:5,q:"Oxytocin: when to stop",a:"Contractions too frequent/long (tachysystole) or non-reassuring FHR."},
+ {w:5,q:"Meconium-stained fluid",a:"Green fluid. May indicate fetal distress; alert the team."},
+ {w:6,q:"Lochia rubra",a:"Bright red, days 1–3."},
+ {w:6,q:"Lochia serosa",a:"Pinkish-brown, ~days 4–10."},
+ {w:6,q:"Lochia alba",a:"Yellow-white, ~day 10 up to 6 weeks."},
+ {w:6,q:"Boggy uterus: first action",a:"Massage the fundus (support the lower segment)."},
+ {w:6,q:"Fundus displaced to the right",a:"Usually a full bladder. Have patient void, then reassess."},
+ {w:7,q:"Newborn HR & RR",a:"HR 110–160 bpm; RR 30–60 breaths/min."},
+ {w:7,q:"Vitamin K",a:"IM in the vastus lateralis; prevents bleeding (newborns lack gut flora to make it)."},
+ {w:7,q:"Erythromycin eye ointment",a:"Prevents ophthalmia neonatorum (gonorrhea/chlamydia)."},
+ {w:7,q:"Jaundice in first 24 hrs",a:"PATHOLOGIC. Report it. Physiologic jaundice appears after 24 hrs."},
+ {w:7,q:"APGAR 7–10",a:"Normal. 4–6 needs some help; 0–3 needs resuscitation."}
+];
+const QUIZ=[
+ {w:2,q:"A patient's LMP began on June 10. Using Naegele's rule, what is the EDD?",o:["March 17","March 3","September 17","April 10"],a:0,r:"June 10 − 3 months = March 10, + 7 days = March 17 of the next year."},
+ {w:2,q:"Which finding is a POSITIVE sign of pregnancy?",o:["Positive urine hCG","Quickening","Fetal heartbeat heard by Doppler","Chadwick's sign"],a:2,r:"Positive signs come only from the fetus: FHR heard, fetal movement felt by examiner, or fetus seen on ultrasound."},
+ {w:3,q:"A patient at 34 weeks reports bright red, painless vaginal bleeding. What should the nurse AVOID?",o:["Monitoring FHR","Vaginal examination","Checking vital signs","Placing on side-lying position"],a:1,r:"Painless bright red bleeding suggests placenta previa. A vaginal exam could cause hemorrhage."},
+ {w:3,q:"A patient on magnesium sulfate has RR 10 and absent patellar reflexes. Priority action?",o:["Increase the infusion","Stop the infusion and notify provider","Recheck in 1 hour","Give oxytocin"],a:1,r:"These are signs of mag toxicity. Stop the drip, notify, and have calcium gluconate ready."},
+ {w:4,q:"The fetal monitor shows decelerations that begin after the peak of each contraction. This suggests:",o:["Head compression","Cord compression","Placental insufficiency","Normal finding"],a:2,r:"Late decelerations (L → P in VEAL CHOP) mean uteroplacental insufficiency."},
+ {w:4,q:"What is the normal fetal heart rate baseline?",o:["60–100","100–120","110–160","160–200"],a:2,r:"Normal FHR baseline is 110–160 bpm."},
+ {w:5,q:"The nurse sees the umbilical cord at the vaginal opening. First action?",o:["Push the cord back in","Apply a warm towel and wait","Lift the presenting part off the cord","Encourage pushing"],a:2,r:"Relieve pressure on the cord first, keep your hand there, position knee-chest, and call for help. Never push the cord back."},
+ {w:6,q:"On postpartum day 1, the fundus is boggy and 2 cm above the umbilicus. First action?",o:["Notify the provider","Massage the fundus","Have the patient ambulate","Give a stool softener"],a:1,r:"Massage first to help the uterus contract. Then check the bladder and report if it stays boggy."},
+ {w:6,q:"Which lochia finding on day 5 is expected?",o:["Bright red with large clots","Pinkish-brown","Yellow-white","Foul-smelling red"],a:1,r:"Lochia serosa (pinkish-brown) is expected about days 4–10."},
+ {w:7,q:"A newborn is pink with blue hands and feet, HR 130, cries vigorously, active, good cry. APGAR?",o:["10","9","8","7"],a:1,r:"Acrocyanosis scores 1 for color. Everything else scores 2, so the total is 9."},
+ {w:7,q:"Where is vitamin K given to a newborn?",o:["Deltoid","Vastus lateralis","Dorsogluteal","Orally only"],a:1,r:"Vastus lateralis is the preferred IM site for newborns."},
+ {w:1,q:"How many vessels are in a normal umbilical cord?",o:["1 artery, 2 veins","2 arteries, 1 vein","2 arteries, 2 veins","1 artery, 1 vein"],a:1,r:"AVA: two arteries and one vein."}
+];
+const SIGNS=[
+ ["Amenorrhea","presumptive"],["Nausea & vomiting","presumptive"],["Breast tenderness","presumptive"],["Quickening","presumptive"],["Urinary frequency","presumptive"],["Fatigue","presumptive"],
+ ["Chadwick's sign","probable"],["Goodell's sign","probable"],["Hegar's sign","probable"],["Positive pregnancy test","probable"],["Ballottement","probable"],["Braxton Hicks contractions","probable"],
+ ["Fetal heartbeat heard","positive"],["Fetus seen on ultrasound","positive"],["Fetal movement felt by examiner","positive"]
+];
+
+/* ---------- PROGRESS ---------- */
+let done=store.get('done',{});
+const key=(w,i)=>w+'-'+i;
+function weekPct(w){const t=WEEKS[w-1].tasks.length;let c=0;for(let i=0;i<t;i++)if(done[key(w,i)])c++;return [c,t]}
+function updateTerm(){let c=0,t=0;WEEKS.forEach(w=>{const[a,b]=weekPct(w.n);c+=a;t+=b});const p=t?Math.round(c/t*100):0;$('#termPct').textContent=p+'%';$('#termBar').style.width=p+'%';$('#termNote').textContent=c+' of '+t+' study tasks checked off'}
+
+function renderMap(){
+  $('#weekGrid').innerHTML=WEEKS.map(w=>{const[c,t]=weekPct(w.n);return `<button class="wk${w.exam?' exam':''}" data-open="${w.n}">
+    <span class="num">WEEK ${String(w.n).padStart(2,'0')}</span><h3>${esc(w.title)}</h3>
+    <span class="tags">${w.tags.map(x=>`<span class="tag">${esc(x)}</span>`).join('')}</span>
+    <span class="prog"><span class="bar"><i style="width:${Math.round(c/t*100)}%"></i></span>${c}/${t}</span></button>`}).join('');
+  updateTerm();
+}
+
+/* ---------- WEEK VIEW ---------- */
+let curWeek=store.get('curWeek',1);
+function renderWeek(){
+  $('#weekPick').innerHTML=WEEKS.map(w=>`<button data-wk="${w.n}" aria-pressed="${w.n===curWeek}">Week ${w.n}</button>`).join('');
+  const w=WEEKS[curWeek-1];const notes=store.get('notes-'+w.n,'');
+  $('#weekBody').innerHTML=`
+  <div class="wkhead"><div class="eyebrow">Week ${w.n} of 8</div><h2>${esc(w.title)}</h2>
+   <div class="row" style="margin-top:8px">${w.tags.map(x=>`<span class="tag">${esc(x)}</span>`).join('')}</div></div>
+  <div class="grid2">
+    <div class="stack">
+      <div class="panel"><h3>Learning objectives</h3><ul class="clean">${w.goals.map(g=>`<li>${esc(g)}</li>`).join('')}</ul></div>
+      <div class="panel"><h3>Class materials</h3>
+        <div class="slot">📑 <span><b>Lecture PowerPoint</b>: added once you share it</span></div>
+        <div class="slot">📝 <span><b>Instructor notes / outline</b>: added once you share it</span></div>
+        <div class="slot">📚 <span><b>Textbook chapters</b>: from your syllabus</span></div>
+        <div class="slot">🩺 <span><b>Clinical / skills lab</b>: from your schedule</span></div>
+      </div>
+      <div class="panel"><h3><label for="notes">My notes</label></h3>
+        <textarea id="notes" placeholder="Jot down what your instructor emphasized, things to ask about, or 'this will be on the test' moments…">${esc(notes)}</textarea>
+        <p class="muted" style="font-size:.8rem;margin:.4em 0 0" id="saved">Saves automatically in this browser</p></div>
+    </div>
+    <div class="stack">
+      <div class="panel"><h3>Study checklist</h3>
+        ${w.tasks.map((t,i)=>`<div class="check"><input type="checkbox" id="t${w.n}-${i}" data-k="${key(w.n,i)}" ${done[key(w.n,i)]?'checked':''}><label for="t${w.n}-${i}">${esc(t)}</label></div>`).join('')}
+      </div>
+      <div class="panel"><h3>Memory trick</h3><div class="mnemo"><div class="word">${esc(w.mnemo.word)}</div>
+        <dl>${w.mnemo.lines.map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl></div></div>
+      <div class="panel"><h3>Practice this week</h3><div class="row">
+        <button class="btn" data-play="flash">Flashcards</button><button class="btn ghost" data-play="quiz">Quiz</button><button class="btn ghost" data-play="match">Match up</button></div></div>
+    </div>
+  </div>`;
+}
+document.addEventListener('change',e=>{
+  if(e.target.matches('.check input')){done[e.target.dataset.k]=e.target.checked;store.set('done',done);updateTerm();renderMap()}
+});
+let noteT;document.addEventListener('input',e=>{if(e.target.id==='notes'){clearTimeout(noteT);noteT=setTimeout(()=>{store.set('notes-'+curWeek,e.target.value);const s=$('#saved');if(s)s.textContent='Saved ✓'},400)}});
+
+/* ---------- TABS ---------- */
+function show(tab){$$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));['map','week','games','labs'].forEach(t=>$('#v-'+t).hidden=t!==tab);if(tab==='week')renderWeek();if(tab==='games')renderGame();window.scrollTo({top:0})}
+$$('nav.tabs button').forEach(b=>b.onclick=()=>show(b.dataset.tab));
+document.addEventListener('click',e=>{
+  const o=e.target.closest('[data-open]');if(o){curWeek=+o.dataset.open;store.set('curWeek',curWeek);show('week');return}
+  const k=e.target.closest('[data-wk]');if(k){curWeek=+k.dataset.wk;store.set('curWeek',curWeek);renderWeek();return}
+  const p=e.target.closest('[data-play]');if(p){game=p.dataset.play;$('#wkFilter').value=String(curWeek);syncGamePick();show('games');}
+});
+
+/* ---------- GAMES ---------- */
+let game='flash';
+$('#wkFilter').innerHTML+=WEEKS.map(w=>`<option value="${w.n}">Week ${w.n}: ${esc(w.title)}</option>`).join('');
+function syncGamePick(){$$('.gp').forEach(b=>b.setAttribute('aria-pressed',b.dataset.game===game))}
+$$('.gp').forEach(b=>b.onclick=()=>{game=b.dataset.game;syncGamePick();renderGame()});
+$('#wkFilter').onchange=renderGame;
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const pool=arr=>{const f=$('#wkFilter').value;const r=f==='all'?arr:arr.filter(x=>x.w==+f);return r.length?r:arr};
+function renderGame(){({flash,quiz,match,sort})[game]()}
+
+function flash(){
+  let deck=shuffle(pool(CARDS)),i=0,got=0;const st=$('#stage');
+  const draw=()=>{if(i>=deck.length){st.innerHTML=`<div style="text-align:center;padding:40px 0"><h3 style="font-size:1.6rem">Deck done!</h3><p>You knew <span class="score">${got}/${deck.length}</span>.</p><button class="btn" id="again">Shuffle again</button></div>`;$('#again').onclick=flash;return}
+    const c=deck[i];st.innerHTML=`<p class="muted" style="text-align:center;margin:0">Card ${i+1} of ${deck.length} · Week ${c.w}</p>
+    <div class="flash"><div class="card3d" id="c3" tabindex="0" role="button" aria-label="Flip card"><div class="face front"><small>Term</small><p>${esc(c.q)}</p><small>tap to flip</small></div><div class="face back"><small>Answer</small><div>${esc(c.a)}</div></div></div></div>
+    <div class="row" style="justify-content:center"><button class="btn ghost" id="fr">Still learning</button><button class="btn" id="fg">Got it ✓</button></div>`;
+    const c3=$('#c3');const flip=()=>c3.classList.toggle('flip');c3.onclick=flip;c3.onkeydown=e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();flip()}};
+    $('#fg').onclick=()=>{got++;i++;draw()};$('#fr').onclick=()=>{deck.push(c);i++;draw()};};
+  draw();
+}
+function quiz(){
+  let qs=shuffle(pool(QUIZ)),i=0,score=0;const st=$('#stage');
+  const draw=()=>{if(i>=qs.length){const p=Math.round(score/qs.length*100);st.innerHTML=`<div style="text-align:center;padding:40px 0"><h3 style="font-size:1.6rem">${p>=78?'You passed this round!':'Keep going, you\'ve got this'}</h3><p>Score <span class="score">${score}/${qs.length} (${p}%)</span></p><p class="muted">Most LPN programs require about 78% to pass, so check your syllabus.</p><button class="btn" id="again">Try again</button></div>`;$('#again').onclick=quiz;return}
+    const q=qs[i];st.innerHTML=`<div class="row" style="justify-content:space-between"><span class="tag">Week ${q.w}</span><span class="score">${score} correct · ${i+1}/${qs.length}</span></div>
+    <h3 style="margin-top:12px;font-size:1.2rem">${esc(q.q)}</h3><div class="qopts">${q.o.map((o,j)=>`<button class="qopt" data-j="${j}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}</div><div id="rat"></div>`;
+    $$('.qopt').forEach(b=>b.onclick=()=>{const j=+b.dataset.j;$$('.qopt').forEach(x=>{x.disabled=true;if(+x.dataset.j===q.a)x.classList.add('right')});if(j===q.a)score++;else b.classList.add('wrong');
+      $('#rat').innerHTML=`<div class="rationale"><b>${j===q.a?'Correct!':'Not quite.'}</b> ${esc(q.r)}</div><div class="row" style="margin-top:12px"><button class="btn" id="nx">Next →</button></div>`;$('#nx').onclick=()=>{i++;draw()}});};
+  draw();
+}
+function match(){
+  const set=shuffle(pool(CARDS)).slice(0,6);let sel=null,left=set.length,tries=0;const st=$('#stage');
+  const L=shuffle(set.map((c,i)=>({i,t:c.q}))),R=shuffle(set.map((c,i)=>({i,t:c.a})));
+  st.innerHTML=`<div class="row" style="justify-content:space-between;margin-bottom:12px"><b>Tap a term, then its meaning</b><span class="score" id="mtries">Tries: 0</span></div>
+  <div class="match"><div style="display:grid;gap:8px">${L.map(x=>`<button class="mt" data-side="L" data-i="${x.i}">${esc(x.t)}</button>`).join('')}</div><div style="display:grid;gap:8px">${R.map(x=>`<button class="mt" data-side="R" data-i="${x.i}">${esc(x.t)}</button>`).join('')}</div></div><div id="mdone"></div>`;
+  $$('.mt').forEach(b=>b.onclick=()=>{if(b.classList.contains('done'))return;
+    if(!sel||sel.dataset.side===b.dataset.side){if(sel)sel.classList.remove('sel');sel=b;b.classList.add('sel');return}
+    tries++;$('#mtries').textContent='Tries: '+tries;
+    if(sel.dataset.i===b.dataset.i){[sel,b].forEach(x=>{x.classList.remove('sel');x.classList.add('done');x.disabled=true});left--;
+      if(!left)$('#mdone').innerHTML=`<div class="result ok" style="text-align:center">All matched in ${tries} tries! <button class="btn" id="again" style="margin-left:8px">New set</button></div>`,$('#again').onclick=match;}
+    else{[sel,b].forEach(x=>{x.classList.add('shake');setTimeout(()=>x.classList.remove('shake','sel'),350)})}
+    sel=null;});
+}
+function sort(){
+  let items=shuffle(SIGNS),i=0,score=0;const st=$('#stage');
+  const draw=(msg)=>{if(i>=items.length){st.innerHTML=`<div style="text-align:center;padding:40px 0"><h3 style="font-size:1.6rem">Sorted!</h3><p><span class="score">${score}/${items.length}</span> correct</p><button class="btn" id="again">Play again</button></div>`;$('#again').onclick=sort;return}
+    st.innerHTML=`<div class="row" style="justify-content:space-between"><b>Which kind of sign is this?</b><span class="score">${score}/${i}</span></div>
+    <div class="sortq">${esc(items[i][0])}</div>
+    <div class="bins"><button class="bin" data-b="presumptive">Presumptive<small>What the patient notices</small></button><button class="bin" data-b="probable">Probable<small>What the examiner finds</small></button><button class="bin" data-b="positive">Positive<small>Only the fetus causes it</small></button></div><div>${msg||''}</div>`;
+    $$('.bin').forEach(b=>b.onclick=()=>{const ok=b.dataset.b===items[i][1];if(ok)score++;const m=`<div class="result ${ok?'ok':'bad'}">${ok?'Yes!':'Nope.'} ${esc(items[i][0])} is <b>${items[i][1]}</b>.</div>`;i++;draw(m)});};
+  draw();
+}
+
+/* ---------- LABS ---------- */
+// Naegele
+$('#calcEdd').onclick=()=>{const v=$('#lmp').value;if(!v){$('#eddOut').textContent='Pick the first day of the last menstrual period.';return}
+  const [y,m,d]=v.split('-').map(Number);const dt=new Date(y,m-1,d);dt.setMonth(dt.getMonth()-3);dt.setDate(dt.getDate()+7);dt.setFullYear(dt.getFullYear()+1);
+  const lmp=new Date(y,m-1,d),today=new Date();const ga=Math.floor((today-lmp)/864e5);
+  const fmt=x=>x.toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric'});
+  $('#eddOut').innerHTML=`EDD: ${fmt(dt)}<br><span style="font-weight:600">Work it: ${fmt(lmp)} → minus 3 months → plus 7 days → plus 1 year.${ga>0&&ga<300?` Gestational age today: ${Math.floor(ga/7)} weeks ${ga%7} days.`:''}</span>`};
+$('#calcEdd').click();
+
+// GTPAL
+const GT=[
+ {s:"Currently pregnant. One son born at 39 weeks, one miscarriage at 10 weeks.",v:[3,1,0,1,1]},
+ {s:"Not pregnant. Twins born at 35 weeks (both living), one daughter at 40 weeks.",v:[2,1,1,0,3]},
+ {s:"Currently pregnant with her first baby.",v:[1,0,0,0,0]},
+ {s:"Currently pregnant. Two term births (both living), one ectopic pregnancy at 8 weeks.",v:[4,2,0,1,2]},
+ {s:"Not pregnant. One stillbirth at 38 weeks, one daughter at 34 weeks who is living.",v:[2,1,1,0,1]},
+ {s:"Currently pregnant. One elective abortion at 9 weeks, one son at 37 weeks, one son at 32 weeks.",v:[4,1,1,1,2]}
+];
+let gti=0;const gtShow=()=>{$('#gtScen').textContent=GT[gti].s;'GTPAL'.split('').forEach(c=>$('#g-'+c).value='');$('#gtOut').hidden=true};
+$('#gtNext').onclick=()=>{gti=(gti+1)%GT.length;gtShow()};
+$('#gtCheck').onclick=()=>{const v='GTPAL'.split('').map(c=>+$('#g-'+c).value||0);const a=GT[gti].v;const ok=v.every((x,i)=>x===a[i]);const o=$('#gtOut');o.hidden=false;o.className='result '+(ok?'ok':'bad');
+  o.innerHTML=ok?'Perfect! G'+a[0]+' T'+a[1]+' P'+a[2]+' A'+a[3]+' L'+a[4]:'Answer: G'+a[0]+' T'+a[1]+' P'+a[2]+' A'+a[3]+' L'+a[4]+'<br><span style="font-weight:600">Twins count as 1 pregnancy and 1 birth but 2 living. Ectopic and miscarriage count as A. A current pregnancy counts in G.</span>'};
+gtShow();
+
+// APGAR
+const AP=[["Appearance",["Blue/pale","Body pink, extremities blue","All pink"]],["Pulse",["Absent","< 100","≥ 100"]],["Grimace",["No response","Grimace","Cry / cough"]],["Activity",["Limp","Some flexion","Active motion"]],["Respiration",["Absent","Slow, irregular","Good cry"]]];
+const apv=[1,2,2,2,2];
+$('#apgar').innerHTML=AP.map(([n,o],i)=>`<div class="ar"><b>${n}</b><div class="seg" role="group" aria-label="${n}">${o.map((t,j)=>`<button data-ap="${i}" data-v="${j}" aria-pressed="${apv[i]===j}">${j}: ${t}</button>`).join('')}</div></div>`).join('');
+const apCalc=()=>{const s=apv.reduce((a,b)=>a+b,0);const o=$('#apOut');o.className='result '+(s>=7?'ok':s>=4?'warn':'bad');o.textContent=`Score ${s}/10: `+(s>=7?'Normal transition. Routine care, keep baby warm, skin-to-skin.':s>=4?'Moderate difficulty. Stimulate, clear airway, may need O₂. Rescore at 5 min.':'Severe distress. Begin resuscitation (NRP) and call for help.')};
+$('#apgar').onclick=e=>{const b=e.target.closest('[data-ap]');if(!b)return;apv[+b.dataset.ap]=+b.dataset.v;$$(`[data-ap="${b.dataset.ap}"]`).forEach(x=>x.setAttribute('aria-pressed',x===b));apCalc()};apCalc();
+
+// Fetal strip
+const STRIPS=[
+ {k:"late",ans:0,opts:["Late decels: turn to side, stop oxytocin, O₂, fluids, notify","Early decels: normal, keep monitoring","Variable decels: reposition for cord compression","Accelerations: reassuring, no action"]},
+ {k:"early",ans:1,opts:["Late decels: turn to side, stop oxytocin, O₂, fluids, notify","Early decels: normal, keep monitoring","Variable decels: reposition for cord compression","Accelerations: reassuring, no action"]},
+ {k:"variable",ans:2,opts:["Late decels: turn to side, stop oxytocin, O₂, fluids, notify","Early decels: normal, keep monitoring","Variable decels: reposition for cord compression","Accelerations: reassuring, no action"]},
+ {k:"accel",ans:3,opts:["Late decels: turn to side, stop oxytocin, O₂, fluids, notify","Early decels: normal, keep monitoring","Variable decels: reposition for cord compression","Accelerations: reassuring, no action"]}
+];
+let sIdx=0;
+function drawStrip(){
+  const s=STRIPS[sIdx],svg=$('#strip');const W=400;const fy=v=>12+(180-v)*1.2;// fhr 100-180 → y
+  const ctr=[60,190,320];let toco='',fhr='';
+  for(let x=0;x<=W;x+=4){
+    let c=0;ctr.forEach(cx=>{const d=(x-cx)/28;c+=Math.exp(-d*d)});
+    const ty=158-c*34;toco+=(x?'L':'M')+x+' '+ty.toFixed(1);
+    let v=140+Math.sin(x*.9)*2.5+Math.sin(x*.37)*1.5;
+    ctr.forEach(cx=>{
+      if(s.k==='early'){const d=(x-cx)/28;v-=22*Math.exp(-d*d)}
+      if(s.k==='late'){const d=(x-cx-34)/26;v-=24*Math.exp(-d*d)}
+      if(s.k==='accel'){const d=(x-cx)/22;v+=22*Math.exp(-d*d)}
+    });
+    if(s.k==='variable'){[[110,0],[250,0],[350,0]].forEach(([cx])=>{const d=(x-cx)/7;v-=48*Math.exp(-d*d*d*d)})}
+    fhr+=(x?'L':'M')+x+' '+fy(v).toFixed(1);
+  }
+  let grid='';for(let v=100;v<=180;v+=20){grid+=`<line x1="0" x2="${W}" y1="${fy(v)}" y2="${fy(v)}" stroke="var(--line)" stroke-width="1"/><text x="4" y="${fy(v)-3}" font-size="9" fill="var(--muted)" font-family="JetBrains Mono, monospace">${v}</text>`}
+  grid+=`<rect x="0" y="${fy(160)}" width="${W}" height="${fy(110)-fy(160)}" fill="var(--soft)" opacity=".5"/>`;
+  svg.innerHTML=`${grid}<text x="${W-4}" y="14" text-anchor="end" font-size="9" fill="var(--muted)" font-family="JetBrains Mono, monospace">FHR bpm</text>
+  <path d="${fhr}" fill="none" stroke="var(--rose)" stroke-width="2"/>
+  <line x1="0" x2="${W}" y1="124" y2="124" stroke="var(--line)"/><text x="4" y="138" text-anchor="start" font-size="9" fill="var(--muted)" font-family="JetBrains Mono, monospace">Contractions</text>
+  <path d="${toco}" fill="none" stroke="var(--berry)" stroke-width="2"/>`;
+  $('#stripOpts').innerHTML=s.opts.map((o,j)=>`<button class="qopt" data-sj="${j}">${esc(o)}</button>`).join('');$('#stripOut').hidden=true;
+}
+$('#stripOpts').onclick=e=>{const b=e.target.closest('[data-sj]');if(!b)return;const s=STRIPS[sIdx];const j=+b.dataset.sj;$$('#stripOpts .qopt').forEach(x=>{x.disabled=true;if(+x.dataset.sj===s.ans)x.classList.add('right')});if(j!==s.ans)b.classList.add('wrong');
+  const o=$('#stripOut');o.hidden=false;o.className='result '+(j===s.ans?'ok':'bad');o.innerHTML=(j===s.ans?'Correct! ':'Look again. ')+'Compare where the dip or rise sits against each contraction peak. <button class="btn" id="sNext" style="margin-left:6px">Next strip</button>';
+  $('#sNext').onclick=()=>{sIdx=(sIdx+1+Math.floor(Math.random()*3))%STRIPS.length;drawStrip()}};
+sIdx=Math.floor(Math.random()*STRIPS.length);drawStrip();
+
+// Fundus
+$('#ppGo').onclick=()=>{const d=Math.max(0,+$('#ppDay').value||0),f=$('#ppFind').value;const exp=d===0?'at or just above the umbilicus':d+' fingerbreadth'+(d>1?'s':'')+' (≈'+d+' cm) below the umbilicus';
+  const lochia=d<=3?'rubra (bright red)':d<=10?'serosa (pinkish-brown)':'alba (yellow-white)';const o=$('#ppOut');
+  if(f==='firm'){o.className='result ok';o.innerHTML=`Expected on day ${d}: fundus ${exp}, lochia ${lochia}. Firm and midline is normal. Keep documenting height, tone & position.`}
+  else if(f==='boggy'){o.className='result bad';o.innerHTML=`Boggy fundus is a hemorrhage risk. Massage the fundus while supporting the lower uterine segment, check for clots, check the bladder, report if it stays boggy. Expected height: ${exp}.`}
+  else{o.className='result warn';o.innerHTML=`Displaced to the right usually means a full bladder. Have the patient void, then reassess. Expected height: ${exp}, lochia ${lochia}.`}};
+$('#ppGo').click();
+
+// Mag
+$('#mgGo').onclick=()=>{const rr=+$('#mgRR').value,uo=+$('#mgUO').value,dtr=+$('#mgDTR').value;const flags=[];
+  if(rr<12)flags.push('RR below 12');if(uo<30)flags.push('urine output below 30 mL/hr');if(dtr===0)flags.push('absent DTRs');
+  const o=$('#mgOut');if(flags.length){o.className='result bad';o.innerHTML='Signs of toxicity: '+flags.join(', ')+'. Stop the infusion, notify the provider, have calcium gluconate ready.'}
+  else if(dtr===1){o.className='result warn';o.textContent='Reflexes decreasing. Keep a close eye and report the trend. Calcium gluconate stays at bedside.'}
+  else{o.className='result ok';o.textContent='Within safe limits. Keep checking RR, DTRs, urine output, LOC and mag level per policy.'}};
+$('#mgGo').click();
+
+/* boot */
+renderMap();renderGame();
+})();
+</script>
